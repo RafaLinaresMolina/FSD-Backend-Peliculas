@@ -13,7 +13,6 @@
   },
   "devDependencies": {},
   "scripts": {
-    "parent-script": "/home/thinkpad/.npm-global/bin/",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },

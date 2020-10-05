@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('film', {
+  return sequelize.define('Film', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER(10),
@@ -46,6 +46,6 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'film'
+    tableName: 'Film'
     });
 };

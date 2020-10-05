@@ -1,60 +1,60 @@
-const { User } = require("../models");
+const { Film } = require("../models");
 
 const UserController = {
-  async getAllUsers(req, res) {
+  async getAllFilms(req, res) {
     try {
-      const users = await User.findAll();
+      const users = await Film.findAll();
       console.log(users);
       res.send(users);
     } catch (error) {
       console.error(error);
       res
         .status(500)
-        .send({ message: "There was a problem trying to get the Users" });
+        .send({ message: "There was a problem trying to get the Films" });
     }
   },
-  async getUserById(req, res) {
+  async getFilmById(req, res) {
     try {
-      const user = await User.findByPk(req.params.id);
+      const user = await Film.findByPk(req.params.id);
       console.log(user);
       res.send(user);
     } catch (error) {
       console.error(error);
       res
         .status(500)
-        .send({ message: "There was a problem trying to get the Users" });
+        .send({ message: "There was a problem trying to get the Films" });
     }
   },
   create(req, res) {
-    User.create(req.body) //INSERT INTO categories
-      .then((User) => res.status(201).send(User))
+    Film.create(req.body) //INSERT INTO categories
+      .then((Film) => res.status(201).send(Film))
       .catch((error) => {
         console.error(error);
         res.status(500).send({
-          message: "There was a problem trying to create the User",
+          message: "There was a problem trying to create the Film",
         });
       });
   },
   update(req, res) {
-    User.update(req.body, {
+    Film.update(req.body, {
       where: {
         id: req.params.id,
       },
     })
       .then(() =>
         res.send({
-          message: "User successfully updated",
+          message: "Film successfully updated",
         })
       )
       .catch((error) => {
         console.error(error);
         res.status(500).send({
-          message: "There was a problem trying to update the User",
+          message: "There was a problem trying to update the Film",
         });
       });
   },
   delete(req, res) {
-    User.destroy({
+    Film.destroy({
       where: {
         id: req.params.id,
       },
@@ -62,17 +62,17 @@ const UserController = {
       .then((rowsAffected) => {
         if (!rowsAffected) {
           return res.send({
-            message: "User not found",
+            message: "Film not found",
           });
         }
         res.send({
-          message: "User successfully removed",
+          message: "Film successfully removed",
         });
       })
       .catch((error) => {
         console.error(error);
         res.status(500).send({
-          message: "There was a problem trying to remove the User",
+          message: "There was a problem trying to remove the Film",
         });
       });
   },
