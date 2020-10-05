@@ -7,7 +7,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'film',
+        model: 'Film',
         key: 'id'
       }
     },
@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'actor',
+        model: 'Actor',
         key: 'id'
       }
     }
