@@ -1,12 +1,12 @@
-const { Film, Sequelize } = require("../models");
+const { Actor, Sequelize } = require("../models");
 const Op = Sequelize.Op;
 
 const UserController = {
-  async getAllFilms(req, res) {
+  async getAll(req, res) {
     try {
-      const films = await Film.findAll();
-      console.log(films);
-      res.send(films);
+      const actors = await Actor.findAll();
+      console.log(actors);
+      res.send(actors);
     } catch (error) {
       console.error(error);
       res
@@ -14,11 +14,11 @@ const UserController = {
         .send({ message: "There was a problem trying to get the Films" });
     }
   },
-  async getFilmById(req, res) {
+  async getById(req, res) {
     try {
-      const film = await Film.findByPk(req.params.id);
-      console.log(film);
-      res.send(film);
+      const actor = await Actor.findByPk(req.params.id);
+      console.log(actor);
+      res.send(actor);
     } catch (error) {
       console.error(error);
       res
@@ -26,19 +26,12 @@ const UserController = {
         .send({ message: "There was a problem trying to get the Films" });
     }
   },
-  async getFilmByName(req, res) {
-    Film.findAll({
+  async getByName(req, res) {
+    Actor.findAll({
       where: {
-        [Op.or]: 
-          {
-            original_title: {
-              [Op.like]: `%${req.params.name}%`,
-            },
-            title: {
-              [Op.like]: `%${req.params.name}%`,
-            },
-          },
-        
+        name: {
+          [Op.like]: `%${req.params.name}%`,
+        }        
       },
     })
       .then((category) => res.send(category))
@@ -50,35 +43,35 @@ const UserController = {
       });
   },
   create(req, res) {
-    Film.create(req.body) //INSERT INTO categories
-      .then((Film) => res.status(201).send(Film))
+    Actor.create(req.body) //INSERT INTO categories
+      .then((Actor) => res.status(201).send(Actor))
       .catch((error) => {
         console.error(error);
         res.status(500).send({
-          message: "There was a problem trying to create the Film",
+          message: "There was a problem trying to create the Actor",
         });
       });
   },
   update(req, res) {
-    Film.update(req.body, {
+    Actor.update(req.body, {
       where: {
         id: req.params.id,
       },
     })
       .then(() =>
         res.send({
-          message: "Film successfully updated",
+          message: "Actor successfully updated",
         })
       )
       .catch((error) => {
         console.error(error);
         res.status(500).send({
-          message: "There was a problem trying to update the Film",
+          message: "There was a problem trying to update the Actor",
         });
       });
   },
   delete(req, res) {
-    Film.destroy({
+    Actor.destroy({
       where: {
         id: req.params.id,
       },
@@ -86,17 +79,17 @@ const UserController = {
       .then((rowsAffected) => {
         if (!rowsAffected) {
           return res.send({
-            message: "Film not found",
+            message: "Actor not found",
           });
         }
         res.send({
-          message: "Film successfully removed",
+          message: "Actor successfully removed",
         });
       })
       .catch((error) => {
         console.error(error);
         res.status(500).send({
-          message: "There was a problem trying to remove the Film",
+          message: "There was a problem trying to remove the Actor",
         });
       });
   },

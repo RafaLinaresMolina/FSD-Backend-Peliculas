@@ -197,4 +197,3 @@ INSERT INTO FilmIsGenre (id_film, id_genre) VALUES (6, 3);
 INSERT INTO price (days, euro_perDay) VALUES (2, 2.5);
 INSERT INTO price (days, euro_perDay) VALUES (6, 2);
 INSERT INTO price (days, euro_perDay) VALUES (15, 1.9);
-
