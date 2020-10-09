@@ -1,13 +1,11 @@
 const { Order, OrderFilm, Film, Sequelize } = require("../models");
 
-
 Order.belongsToMany(Film, {
   through: { model: OrderFilm },
 });
 Film.belongsToMany(Order, {
   through: { model: OrderFilm },
 });
-
 
 const OrderMovieController = {
   async getAll(req, res) {
@@ -18,11 +16,10 @@ const OrderMovieController = {
             model: Film,
             required: true,
             through: {
-              attributes: ['stock'],
+              attributes: ["stock"],
             },
-            
-          }
-        ]
+          },
+        ],
       });
       res.send(values);
     } catch (error) {
@@ -37,18 +34,17 @@ const OrderMovieController = {
     try {
       const values = await Order.findAll({
         where: {
-          id: req.params.id
+          id: req.params.id,
         },
         include: [
           {
             model: Film,
             required: true,
             through: {
-              attributes: ['stock'],
+              attributes: ["stock"],
             },
-            
-          }
-        ]
+          },
+        ],
       });
       res.send(values);
     } catch (error) {
@@ -63,17 +59,17 @@ const OrderMovieController = {
     try {
       const values = await Order.findAll({
         where: {
-          UserId: req.params.id
+          UserId: req.params.id,
         },
         include: [
           {
             model: Film,
             required: true,
             through: {
-              attributes: ['stock'],
+              attributes: ["stock"],
             },
-          }
-        ]
+          },
+        ],
       });
       res.send(values);
     } catch (error) {
@@ -83,7 +79,7 @@ const OrderMovieController = {
         trace: error.message,
       });
     }
-  }
-}
+  },
+};
 
 module.exports = OrderMovieController;
