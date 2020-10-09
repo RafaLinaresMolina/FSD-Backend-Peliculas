@@ -22,13 +22,9 @@ const auth = {
   },
   async adminRequired(req, res, next) {
     try {
-      const token = req.headers.authorization.split(" ")[1];
-      jwt.verify(token, process.env.SECRET);
-      const user = await User.findOne({ where: { token: token } });
-      if (!user) {
+      if (req.user.rol_id != 0) {
         return res.status(403).send({ message: error403 });
       }
-      req.user = user;
       next();
     } catch (error) {
       process.log.error(error);
