@@ -1,7 +1,10 @@
 const router = require('express').Router();
 const UserController = require('../controllers/actor');
+const {Actor} = require("../models");
+const GenericController = require('../controllers/generic');
+const controller = new GenericController(Actor);
 
-router.get('/', UserController.getAll);
+router.get('/', controller.getAll);
 router.get('/:id', UserController.getById);
 router.get('/name/:name', UserController.getByName);
 router.post('/', UserController.create);

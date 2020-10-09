@@ -1,11 +1,10 @@
 const { Actor, Sequelize } = require("../models");
 const Op = Sequelize.Op;
 
-const UserController = {
+const ActorController = {
   async getAll(req, res) {
     try {
       const actors = await Actor.findAll();
-      console.log(actors);
       res.send(actors);
     } catch (error) {
       console.error(error);
@@ -17,7 +16,6 @@ const UserController = {
   async getById(req, res) {
     try {
       const actor = await Actor.findByPk(req.params.id);
-      console.log(actor);
       res.send(actor);
     } catch (error) {
       console.error(error);
@@ -31,7 +29,7 @@ const UserController = {
       where: {
         name: {
           [Op.like]: `%${req.params.name}%`,
-        }        
+        },
       },
     })
       .then((category) => res.send(category))
@@ -95,4 +93,4 @@ const UserController = {
   },
 };
 
-module.exports = UserController;
+module.exports = ActorController;

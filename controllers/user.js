@@ -1,16 +1,16 @@
+
 const { User } = require("../models");
 
 const UserController = {
   async getAllUsers(req, res) {
     try {
       const users = await User.findAll();
-      console.log(users);
       res.send(users);
     } catch (error) {
       console.error(error);
       res
         .status(500)
-        .send({ message: "There was a problem trying to get the Users" });
+        .send({ message: "Unable to get the users", trace: error });
     }
   },
   async getUserById(req, res) {
@@ -22,7 +22,10 @@ const UserController = {
       console.error(error);
       res
         .status(500)
-        .send({ message: "There was a problem trying to get the Users" });
+        .send({
+          message: "Unable to retrive the specified user",
+          trace: error,
+        });
     }
   },
   create(req, res) {
@@ -31,7 +34,8 @@ const UserController = {
       .catch((error) => {
         console.error(error);
         res.status(500).send({
-          message: "There was a problem trying to create the User",
+          message: "Unable to create the user",
+          trace: error,
         });
       });
   },
@@ -50,6 +54,7 @@ const UserController = {
         console.error(error);
         res.status(500).send({
           message: "There was a problem trying to update the User",
+          trace: error,
         });
       });
   },

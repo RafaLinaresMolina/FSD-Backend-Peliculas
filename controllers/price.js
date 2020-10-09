@@ -1,7 +1,7 @@
 const { Price, Sequelize } = require("../models");
 const Op = Sequelize.Op;
 
-const UserController = {
+const PriceController = {
   async getAll(req, res) {
     try {
       const prices = await Price.findAll();
@@ -95,4 +95,4 @@ const UserController = {
   },
 };
 
-module.exports = UserController;
+module.exports = PriceController;

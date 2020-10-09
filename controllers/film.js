@@ -1,11 +1,10 @@
 const { Film, Sequelize } = require("../models");
 const Op = Sequelize.Op;
 
-const UserController = {
+const FilmController = {
   async getAllFilms(req, res) {
     try {
       const films = await Film.findAll();
-      console.log(films);
       res.send(films);
     } catch (error) {
       console.error(error);
@@ -17,7 +16,6 @@ const UserController = {
   async getFilmById(req, res) {
     try {
       const film = await Film.findByPk(req.params.id);
-      console.log(film);
       res.send(film);
     } catch (error) {
       console.error(error);
@@ -102,4 +100,4 @@ const UserController = {
   },
 };
 
-module.exports = UserController;
+module.exports = FilmController;

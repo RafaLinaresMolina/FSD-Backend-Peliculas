@@ -9,7 +9,7 @@ const priceRouter = require('./routes/price');
 const actorAppearFilmRouter = require('./routes/ActorAppearFilm');
 
 const app = express();
-const PORT = 5500;
+const PORT = process.env.PORT || 5500;
 
 app.use(express.json()); 
 app.use('/users', usersRouter);

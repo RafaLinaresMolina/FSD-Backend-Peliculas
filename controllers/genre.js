@@ -1,7 +1,7 @@
 const { Genre, Sequelize } = require("../models");
 const Op = Sequelize.Op;
 
-const UserController = {
+const GenreController = {
   async getAll(req, res) {
     try {
       const genres = await Genre.findAll();
@@ -95,4 +95,4 @@ const UserController = {
   },
 };
 
-module.exports = UserController;
+module.exports = GenreController;
