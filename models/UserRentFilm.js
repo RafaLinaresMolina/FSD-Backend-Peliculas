@@ -7,7 +7,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'user',
+        model: 'User',
         key: 'id'
       }
     },
@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(10),
       allowNull: true,
       references: {
-        model: 'film',
+        model: 'Film',
         key: 'id'
       },
       unique: "FK_Film_Rent_User"

@@ -1,9 +1,9 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('FilmIsGenre', {
-    id_film: {
-      type: DataTypes.INTEGER(10),
+  return sequelize.define('OrderFilm', {
+    FilmId: {
+      type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       references: {
@@ -11,17 +11,21 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    id_genre: {
-      type: DataTypes.INTEGER(10),
+    OrderId: {
+      type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'Genre',
+        model: 'Order',
         key: 'id'
       }
+    },
+    stock: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'FilmIsGenre'
+    tableName: 'OrderFilm'
     });
 };
