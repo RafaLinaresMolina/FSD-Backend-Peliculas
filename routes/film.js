@@ -1,11 +1,15 @@
 const router = require('express').Router();
 const filmController = require('../controllers/film');
 
-router.get('/', filmController.getAllFilms);
-router.get('/:id', filmController.getFilmById);
+const {Film} = require("../models");
+const GenericController = require('../controllers/GenericController');
+const controller = new GenericController(Film);
+
+router.get('/', controller.getAll);
+router.get('/:id', controller.getById);
 router.get('/title/:name', filmController.getFilmByName);
-router.post('/', filmController.create);
-router.put('/:id', filmController.update);
-router.delete('/:id', filmController.delete);
+router.post('/', controller.create);
+router.put('/:id', controller.update);
+router.delete('/:id', controller.delete);
 
 module.exports = router;
