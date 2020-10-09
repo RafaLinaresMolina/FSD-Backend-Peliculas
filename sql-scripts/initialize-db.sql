@@ -47,16 +47,21 @@ CREATE TABLE IF NOT EXISTS Genre (
 	last_modified TIMESTAMP,
 	PRIMARY KEY(id)
 );
-CREATE TABLE IF NOT EXISTS `Order` (
-	id int(10) AUTO_INCREMENT,
+CREATE TABLE `Order` (
+	id INT(10) AUTO_INCREMENT,
 	status ENUM(
 		"pending",
 		"sended",
 		"client",
 		"returning",
 		"stocked"
-	),
-	UserId integer,
+	) DEFAULT 'pending',
+	UserId int(10),
+	createdAt timestamp DEFAULT current_timestamp NOT NULL,
+	arrivedAtClient timestamp,
+	recomendedReturnDate timestamp,
+	realReturnDate timestamp,
+	reStoked timestamp,
 	PRIMARY KEY(id)
 );
 /* RELATIONAL TABLES */

@@ -1,55 +1,90 @@
-const { User, Order } = require("../models");
+const { User, Order, OrderFilm, Film, Sequelize } = require("../models");
 
-Order.belongsTo(User);
+Order.belongsTo(User, {
+  through: { model: Film },
+  foreignKey: "UserId",
+});
+
+Order.belongsToMany(Film, {
+  as: "Films",
+  through: { model: OrderFilm },
+  foreignKey: "FilmIdm"
+});
+
+Film.belongsToMany(Order, {
+  as: "OrderWithFilms",
+  through: { model: OrderFilm },
+  foreignKey: "OrderId"
+});
 
 const OrderController = {
   async getAll(req, res) {
     try {
-      const users = await User.findAll({
+      const orders = await Order.findAll({
         include: [
           {
-            model: User,
+            model: Film,
             required: true,
-            include: {
-              attributes: ['name', 'id'],
-            },
+            through: { atributes: ['stock'] }
+          },
+        ],
+      });
+      res.send(orders);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Unable to get the ${Order.name} resource`,
+        trace: error.message,
+      });
+    }
+  },
+  async getByUserId(req, res) {
+    try {
+      const order = await Order.findAll({
+        where: {
+          UserId: req.params.id
+        },
+        include: [
+          {
+            model: Film,
+            required: true,
             through: {
-              attributes: [],
+              attributes: ['stock'],
             },
           },
         ],
       });
-      res.send(users);
+      res.send(order);
     } catch (error) {
       console.error(error);
-      res
-        .status(500)
-        .send({ message: "Unable to get the users", trace: error });
+      res.status(500).send({
+        message: `Unable to retrive the specified ${Order.name} resource`,
+        trace: error.message,
+      });
     }
   },
   async getById(req, res) {
     try {
-      const user = await User.findByPk(req.params.id, {
+      const order = await Order.findAll({
+        where: {
+          id: req.params.id,
+        },
         include: [
           {
-            model: User,
+            model: Film,
             required: true,
-            include: {
-              attributes: ['name', 'id'],
-            },
             through: {
-              attributes: [],
+              attributes: ['stock'],
             },
           },
         ],
       });
-      console.log(user);
-      res.send(user);
+      res.send(order);
     } catch (error) {
       console.error(error);
       res.status(500).send({
-        message: "Unable to retrive the specified user",
-        trace: error,
+        message: `Unable to retrive the specified ${Order.name} resource`,
+        trace: error.message,
       });
     }
   },

@@ -8,6 +8,8 @@ const actorsRouter = require("./routes/actor");
 const genreRouter = require("./routes/genre");
 const priceRouter = require("./routes/price");
 const actorAppearFilmRouter = require("./routes/ActorAppearFilm");
+const OrderRouter = require("./routes/order");
+const OrderFilmRouter = require("./routes/OrderFilm");
 
 const app = express();
 const PORT = process.env.PORT || 5500;
@@ -27,6 +29,10 @@ const init = () => {
   app.use("/genres", genreRouter);
   app.use("/prices", priceRouter);
   app.use("/actorsinfilm", actorAppearFilmRouter);
+  app.use("/orders", OrderRouter);
+  app.use("/orderfilm", OrderFilmRouter);
+
+
   app.listen(PORT, () => {
       process.log.info(`Server Up at port: ${PORT}`);
   });

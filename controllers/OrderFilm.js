@@ -1,64 +1,89 @@
-const { User, Order, Film, OrderFilm, Sequelize } = require("../models");
-const Op = Sequelize.Op;
+const { Order, OrderFilm, Film, Sequelize } = require("../models");
 
-Film.belongsToMany(Actor, {
-  through: { model: ActorAppearFilm },
-  foreignKey: "id_film",
+
+Order.belongsToMany(Film, {
+  through: { model: OrderFilm },
 });
-Actor.belongsToMany(Film, {
-  through: { model: ActorAppearFilm },
-  foreignKey: "id_actor",
+Film.belongsToMany(Order, {
+  through: { model: OrderFilm },
 });
 
-const ActorAppearFilmController = {
-  async getActorsFromFilmById(req, res) {
-    try {
-      const film = await Film.findByPk(req.params.id, {
-        include: [
-          {
-            model: Actor,
-            required: true,
-            through: {
-              attributes: [],
-            },
-          },
-        ],
-      });
 
-      res.send(film);
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .send({
-          message: "There was a problem trying to get the Actors from a Film",
-        });
-    }
-  },
-  async getFilmsByActorId(req, res) {
+const OrderMovieController = {
+  async getAll(req, res) {
     try {
-      const actors = await Actor.findByPk(req.params.id, {
+      const values = await Order.findAll({
         include: [
           {
             model: Film,
             required: true,
             through: {
-              attributes: [],
+              attributes: ['stock'],
             },
-          },
-        ],
+            
+          }
+        ]
       });
-
-      res.send(actors);
+      res.send(values);
     } catch (error) {
       console.error(error);
-      res
-        .status(500)
-        .send({
-          message: "There was a problem trying to get the Films from the actor",
-        });
+      res.status(500).send({
+        message: `Unable to get the ${OrderFilm.name} resource`,
+        trace: error.message,
+      });
     }
   },
-};
+  async getByOrderId(req, res) {
+    try {
+      const values = await Order.findAll({
+        where: {
+          id: req.params.id
+        },
+        include: [
+          {
+            model: Film,
+            required: true,
+            through: {
+              attributes: ['stock'],
+            },
+            
+          }
+        ]
+      });
+      res.send(values);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Unable to get the ${OrderFilm.name} resource`,
+        trace: error.message,
+      });
+    }
+  },
+  async getByUserId(req, res) {
+    try {
+      const values = await Order.findAll({
+        where: {
+          UserId: req.params.id
+        },
+        include: [
+          {
+            model: Film,
+            required: true,
+            through: {
+              attributes: ['stock'],
+            },
+          }
+        ]
+      });
+      res.send(values);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Unable to get the ${OrderFilm.name} resource`,
+        trace: error.message,
+      });
+    }
+  }
+}
 
-module.exports = ActorAppearFilmController;
+module.exports = OrderMovieController;
