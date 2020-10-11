@@ -12,7 +12,7 @@ const auth = {
         return res.status(401).send({ message: error401 })
       }
       const token = req.headers.authorization.split(" ")[1];
-      jwt.verify(token, process.env.SECRET);
+      jwt.verify(token, process.env.SECRET_AUTH_JWT);
       const user = await User.findOne({ where: { token: token } });
       if (!user) {
         return res.status(401).send({ message: error401 });
