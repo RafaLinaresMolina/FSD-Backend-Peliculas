@@ -18,7 +18,7 @@ Log.readConfig("./config/logger.json").then(() => {
   process.log = Log;
   init();
 }).catch(err => {
-  console.log(err => console.log);
+  console.log(err => console.log(err.message));
 }) 
 
 const init = () => {
