@@ -29,23 +29,23 @@ module.exports = function(sequelize, DataTypes) {
     },
     arrivedAtClient: {
       type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: "0000-00-00 00:00:00"
+      allowNull: true,
+      //defaultValue: "0000-00-00 00:00:00"
     },
     recomendedReturnDate: {
       type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: "0000-00-00 00:00:00"
+      allowNull: true,
+      //defaultValue: "0000-00-00 00:00:00"
     },
     realReturnDate: {
       type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: "0000-00-00 00:00:00"
+      allowNull: true,
+      //defaultValue: "0000-00-00 00:00:00"
     },
     reStoked: {
       type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: "0000-00-00 00:00:00"
+      allowNull: true,
+      //defaultValue: "0000-00-00 00:00:00"
     }
   }, {
     sequelize,
