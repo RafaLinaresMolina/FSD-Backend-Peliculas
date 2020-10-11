@@ -90,7 +90,6 @@ const OrderController = {
   },
   async create(req, res) {
     let value;
-    let films;
     let OrderFilmInstance;
     try {
       const newOrderFilms = await checkStockage(req.body.Films);
