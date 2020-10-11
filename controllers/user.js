@@ -16,7 +16,6 @@ const UserController = {
   async getUserById(req, res) {
     try {
       const user = await User.findByPk(req.params.id);
-      console.log(user);
       res.send(user);
     } catch (error) {
       console.error(error);

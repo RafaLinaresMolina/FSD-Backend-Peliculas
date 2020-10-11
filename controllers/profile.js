@@ -5,7 +5,7 @@ const UserController = {
   async getProfileById(req, res) {
     try {
       const user = await User.findByPk(req.user.id);
-      console.log(user);
+      process.log.data(user);
       res.send(user);
     } catch (error) {
       console.error(error);
@@ -17,47 +17,43 @@ const UserController = {
         });
     }
   },
-  update(req, res) {
-    User.update(req.body, {
-      where: {
-        id: req.user.id,
-      },
-    })
-      .then(() =>
-        res.send({
-          message: "Profile successfully updated",
+  async update(req, res) {
+    try {
+      const [affectedRows] = await User.update(req.body, {
+        where: {
+          id: req.user.id,
+        },
+      });
+      if(!affectedRows){
+        return res.send({
+          message: "Nothing to update",
         })
-      )
-      .catch((error) => {
-        console.error(error);
+      }
+      res.send({
+        message: "Profile successfully updated",
+      })
+    } catch (error) {
+      process.log.error(error);
         res.status(500).send({
           message: "There was a problem trying to update the Profile",
           trace: error,
         });
-      });
+    }
   },
-  delete(req, res) {
-    User.destroy({
-      where: {
-        id: req.params.id,
-      },
-    })
-      .then((rowsAffected) => {
-        if (!rowsAffected) {
-          return res.send({
-            message: "User not found",
-          });
-        }
-        res.send({
-          message: "Profile successfully removed",
-        });
-      })
-      .catch((error) => {
-        console.error(error);
+  async delete(req, res) {
+    try {
+      const user = await User.findByPk(req.user.id);
+      user.status = 0;
+      user.save();
+      res.send({
+        message: "Profile successfully removed",
+      });
+    } catch (error) {
+      process.log.error(error.message);
         res.status(500).send({
           message: "There was a problem trying to remove the Profile",
         });
-      });
+    }     
   },
 };
 
