@@ -5,7 +5,7 @@ const ActorController = {
 
   async getByName(req, res) {
     try {
-      const actors = Actor.findAll({
+      const actors = await Actor.findAll({
         where: {
           name: {
             [Op.like]: `%${req.params.name}%`,
