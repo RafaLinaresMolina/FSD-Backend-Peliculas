@@ -28,12 +28,10 @@ const ActorAppearFilmController = {
       res.send(film);
     } catch (error) {
       process.log.error(error);
-      res
-        .status(500)
-        .send({
-          message: "There was a problem trying to get the Actors from a Film",
-          trace: error.message
-        });
+      res.status(500).send({
+        message: "There was a problem trying to get the Actors from a Film",
+        trace: error.message,
+      });
     }
   },
   async getFilmsByActorId(req, res) {
@@ -53,21 +51,24 @@ const ActorAppearFilmController = {
       res.send(actors);
     } catch (error) {
       process.log.error(error);
-      res
-        .status(500)
-        .send({
-          message: "There was a problem trying to get the Films from the actor",
-          trace: error.message
-        });
+      res.status(500).send({
+        message: "There was a problem trying to get the Films from the actor",
+        trace: error.message,
+      });
     }
   },
   async create(req, res) {
     let ActorsAppearInFilmInstance;
     try {
-      const newActorsInFilm = await createObject(req.body.film_id, req.body.Actors);
+      const newActorsInFilm = await createObject(
+        req.body.film_id,
+        req.body.Actors
+      );
       process.log.debug(`Aux objects generated`);
-      ActorsAppearInFilmInstance = await ActorAppearFilm.bulkCreate(newActorsInFilm);
-      process.log.info('newActorsInFilm rows created');
+      ActorsAppearInFilmInstance = await ActorAppearFilm.bulkCreate(
+        newActorsInFilm
+      );
+      process.log.info("newActorsInFilm rows created");
       res.status(201).send(ActorsAppearInFilmInstance);
     } catch (err) {
       process.log.error(err.message);
@@ -76,13 +77,39 @@ const ActorAppearFilmController = {
         trace: err.message,
       });
     }
-  }
+  },
+  async delete(req, res) {
+    {
+      try {
+        const rowsAffected = ActorAppearFilm.destroy({
+          where: {
+            id_film: req.params.id,
+          },
+        });
+
+        if (!rowsAffected) {
+          return res.send({
+            message: "Nothing to delete",
+            rowsAffected,
+          });
+        }
+
+        return res.send({ message: "resource deleted", rowsAffected });
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({
+          message: `Theres was a problem trying to delete the ${ActorAppearFilm.modelName} resource`,
+          trace: error.message,
+        });
+      }
+    }
+  },
 };
 
 const createObject = async (film_id, ActorsInFilm) => {
   try {
     const film = await Film.findByPk(film_id);
-    if(!film){
+    if (!film) {
       throw new Error(`Film with id ${film_id} does not exist.`);
     }
     const newActorsInFilm = [];
@@ -90,8 +117,8 @@ const createObject = async (film_id, ActorsInFilm) => {
       const element = ActorsInFilm[i];
       process.log.info(element);
       const actor = await Actor.findByPk(element.ActorId);
-      if(!actor){
-        throw new Error(`Actor with id ${element.ActorId} does not exist.`); 
+      if (!actor) {
+        throw new Error(`Actor with id ${element.ActorId} does not exist.`);
       }
       newActorsInFilm.push({ id_film: film_id, id_actor: actor.id });
     }
