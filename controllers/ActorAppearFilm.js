@@ -27,11 +27,12 @@ const ActorAppearFilmController = {
 
       res.send(film);
     } catch (error) {
-      console.error(error);
+      process.log.error(error);
       res
         .status(500)
         .send({
           message: "There was a problem trying to get the Actors from a Film",
+          trace: error.message
         });
     }
   },
@@ -51,11 +52,12 @@ const ActorAppearFilmController = {
 
       res.send(actors);
     } catch (error) {
-      console.error(error);
+      process.log.error(error);
       res
         .status(500)
         .send({
           message: "There was a problem trying to get the Films from the actor",
+          trace: error.message
         });
     }
   },
