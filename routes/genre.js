@@ -15,6 +15,6 @@ router.put('/:id', auth.loggedRequired, auth.adminRequired, controller.update);
 router.delete('/:id', auth.loggedRequired, auth.adminRequired, controller.deactivate);
 router.put('/reactivate/:id', auth.loggedRequired, auth.adminRequired, controller.reactivate);
 router.post('/genrefilm/', auth.loggedRequired, auth.adminRequired, genreController.createGenereFilm);
-router.delete('genrefilm/:FilmId', auth.loggedRequired, auth.adminRequired, genreController.deleteGenresOfFilm);
+router.delete('/genrefilm/delete/:FilmId', auth.loggedRequired, auth.adminRequired, genreController.deleteGenresOfFilm);
 
 module.exports = router;
