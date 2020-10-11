@@ -1,0 +1,5 @@
+films/genre/name/:name -> Hacer que muestre todos los generos
+films/genre/:id -> Hacer que muestre todos los generos
+
+films/actor/name/:name -> Hacer que muestre todos los actores
+films/actor/:id -> Hacer que muestre todos los actores

@@ -7,7 +7,6 @@ const filmRouter = require("./routes/film");
 const actorsRouter = require("./routes/actor");
 const genreRouter = require("./routes/genre");
 const priceRouter = require("./routes/price");
-const actorAppearFilmRouter = require("./routes/ActorAppearFilm");
 const OrderRouter = require("./routes/order");
 const OrderFilmRouter = require("./routes/OrderFilm");
 const authRouter = require("./routes/auth");
@@ -29,9 +28,10 @@ const init = () => {
   app.use("/profile", profileRouter);
   app.use("/films", filmRouter);
   app.use("/actors", actorsRouter);
+  
   app.use("/genres", genreRouter);
+  
   app.use("/prices", priceRouter);
-  app.use("/actorsinfilm", actorAppearFilmRouter);
   app.use("/orders", OrderRouter);
   app.use("/orderfilm", OrderFilmRouter);
 

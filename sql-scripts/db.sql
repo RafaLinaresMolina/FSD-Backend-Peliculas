@@ -98,7 +98,7 @@ CREATE TABLE `Genre` (
   `name` varchar(255) NOT NULL,
   `status` tinyint(1) DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `last_modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `last_modified` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;

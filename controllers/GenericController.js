@@ -18,7 +18,7 @@ class GenericController {
         .status(500)
         .send({
           message: `Theres was a problem trying fetching all the ${this.modelName} resources`,
-          trace: error.message,
+          trace: error,
         });
     }
   };
@@ -35,7 +35,7 @@ class GenericController {
         .status(500)
         .send({
           message: `Theres was a problem trying fetching the ${this.modelName} resource by Id`,
-          trace: error.message,
+          trace: error,
         });
     }
   };
@@ -49,7 +49,7 @@ class GenericController {
       console.error(error);
       res.status(500).send({
         message: `Theres was a problem trying to create the ${this.modelName} resource`,
-        trace: error.message,
+        trace: error,
       });
     }
   };
@@ -76,7 +76,7 @@ class GenericController {
       console.error(error);
       res.status(500).send({
         message: `Theres was a problem trying to update the ${this.modelName} resource`,
-        trace: error.message,
+        trace: error,
       });
     }
   };
@@ -101,7 +101,39 @@ class GenericController {
       console.error(error);
       res.status(500).send({
         message: `Theres was a problem trying to delete the ${this.modelName} resource`,
-        trace: error.message,
+        trace: error,
+      });
+    }
+  };
+
+  deactivate = async (req, res) => {
+    try {
+      const value = await this.model.findByPk(req.params.id);
+      value.status = 0;
+      await value.save();
+
+      return res.send({ message: `resource with id '${value.id}' deleted` });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Theres was a problem trying to delete the ${this.modelName} resource`,
+        trace: error,
+      });
+    }
+  };
+
+  reactivate = async (req, res) => {
+    try {
+      const value = await this.model.findByPk(req.params.id);
+      value.status = 1;
+      await value.save();
+
+      return res.send({ message: `resource with id '${value.id}' reactivated`});
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({
+        message: `Theres was a problem trying to delete the ${this.modelName} resource`,
+        trace: error,
       });
     }
   };

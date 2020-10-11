@@ -16,7 +16,7 @@ const GenreController = {
       process.log.error(err);
       res.status(500).send({
         message: "There was a problem trying to get the Genre by name",
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -35,7 +35,7 @@ const GenreController = {
       process.log.error(err.message);
       res.status(500).send({
         message: `Theres was a problem trying to set generes in film.`,
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -58,7 +58,7 @@ const GenreController = {
         console.error(error);
         res.status(500).send({
           message: `Theres was a problem trying to delete the ${FilmIsGenre.modelName} resource`,
-          trace: error.message,
+          trace: error,
         });
       }
     }
@@ -67,6 +67,7 @@ const GenreController = {
 
 const createObject = async (film_id, Generes) => {
   try {
+    process.log.info(`${film_id} ${Generes}`)
     const film = await Film.findByPk(film_id);
     if (!film) {
       throw new Error(`Film with id ${film_id} does not exist.`);
@@ -79,9 +80,9 @@ const createObject = async (film_id, Generes) => {
       if (!genre) {
         throw new Error(`Genre with id ${element.GenreId} does not exist.`);
       }
-      newGenres.push({ id_film: film_id, genre: actor.id });
+      newGenres.push({ id_film: film_id, id_genre: genre.id });
     }
-    return newActorsInFilm;
+    return newGenres;
   } catch (err) {
     process.log.error(err.message);
     throw err;

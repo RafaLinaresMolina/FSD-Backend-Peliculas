@@ -44,7 +44,7 @@ const UserController = {
     try {
       const user = await User.findByPk(req.user.id);
       user.status = 0;
-      user.save();
+      await user.save();
       res.send({
         message: "Profile successfully removed",
       });

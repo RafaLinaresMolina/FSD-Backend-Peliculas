@@ -26,7 +26,7 @@ const OrderMovieController = {
       console.error(error);
       res.status(500).send({
         message: `Unable to get the ${OrderFilm.name} resource`,
-        trace: error.message,
+        trace: error,
       });
     }
   },
@@ -51,7 +51,7 @@ const OrderMovieController = {
       console.error(error);
       res.status(500).send({
         message: `Unable to get the ${OrderFilm.name} resource`,
-        trace: error.message,
+        trace: error,
       });
     }
   },
@@ -76,7 +76,7 @@ const OrderMovieController = {
       console.error(error);
       res.status(500).send({
         message: `Unable to get the ${OrderFilm.name} resource`,
-        trace: error.message,
+        trace: error,
       });
     }
   },

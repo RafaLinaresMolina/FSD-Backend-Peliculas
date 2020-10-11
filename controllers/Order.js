@@ -34,7 +34,7 @@ const OrderController = {
       process.log.error(err.message);
       res.status(500).send({
         message: `Unable to get the ${Order.name} resource`,
-        trace: error.message,
+        trace: error,
       });
     }
   },
@@ -59,7 +59,7 @@ const OrderController = {
       process.log.error(err.message);
       res.status(500).send({
         message: `Unable to retrive the specified ${Order.name} resource`,
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -84,7 +84,7 @@ const OrderController = {
       process.log.error(err.message);
       res.status(500).send({
         message: `Unable to retrive the specified ${Order.name} resource`,
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -117,7 +117,7 @@ const OrderController = {
       process.log.error(err.message);
       res.status(500).send({
         message: `Theres was a problem trying to create the ${Order.name} resource`,
-        trace: err.message,
+        trace: err,
       });
     }
   },async updateStatus(req, res) {

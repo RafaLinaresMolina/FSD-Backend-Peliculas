@@ -30,7 +30,7 @@ const ActorAppearFilmController = {
       process.log.error(error);
       res.status(500).send({
         message: "There was a problem trying to get the Actors from a Film",
-        trace: error.message,
+        trace: error,
       });
     }
   },
@@ -53,7 +53,7 @@ const ActorAppearFilmController = {
       process.log.error(error);
       res.status(500).send({
         message: "There was a problem trying to get the Films from the actor",
-        trace: error.message,
+        trace: error,
       });
     }
   },
@@ -74,7 +74,7 @@ const ActorAppearFilmController = {
       process.log.error(err.message);
       res.status(500).send({
         message: `Theres was a problem trying to set actors in film.`,
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -99,7 +99,7 @@ const ActorAppearFilmController = {
         console.error(error);
         res.status(500).send({
           message: `Theres was a problem trying to delete the ${ActorAppearFilm.modelName} resource`,
-          trace: error.message,
+          trace: error,
         });
       }
     }

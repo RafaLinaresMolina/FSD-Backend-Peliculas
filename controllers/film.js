@@ -64,7 +64,7 @@ const FilmController = {
       process.log.error(err);
       res.status(500).send({
         message: "There was a problem trying to get the Films by name",
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -94,7 +94,7 @@ const FilmController = {
       process.log.error(err);
       res.status(500).send({
         message: "There was a problem trying to get the Films",
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -129,7 +129,7 @@ const FilmController = {
       process.log.error(err);
       res.status(500).send({
         message: "There was a problem trying to get the Films by name",
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -163,7 +163,7 @@ const FilmController = {
       process.log.error(err);
       res.status(500).send({
         message: "There was a problem trying to get the Films by name",
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -195,7 +195,7 @@ const FilmController = {
       process.log.error(err);
       res.status(500).send({
         message: "There was a problem trying to get the Films by name",
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -227,7 +227,7 @@ const FilmController = {
       process.log.error(err);
       res.status(500).send({
         message: "There was a problem trying to get the Films by name",
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -235,13 +235,13 @@ const FilmController = {
     try {
       const film = await Film.findByPk(req.params.id);
       film.status = 0;
-      film.save();
+      await film.save();
       res.send({message: `Film '${film.title}' deleted.`});
     } catch (err) {
       process.log.error(err);
       res.status(500).send({
         message: "There was a problem trying to get the Films by name",
-        trace: err.message,
+        trace: err,
       });
     }
   },
@@ -249,13 +249,13 @@ const FilmController = {
     try {
       const film = await Film.findByPk(req.params.id);
       film.status = 1;
-      film.save();
+      await film.save();
       res.send({message: `Film '${film.title}' reactivated.`});
     } catch (err) {
       process.log.error(err);
       res.status(500).send({
         message: "There was a problem trying to get the Films by name",
-        trace: err.message,
+        trace: err,
       });
     }
   },
