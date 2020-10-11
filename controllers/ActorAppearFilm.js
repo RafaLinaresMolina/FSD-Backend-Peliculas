@@ -73,7 +73,7 @@ const ActorAppearFilmController = {
     } catch (err) {
       process.log.error(err.message);
       res.status(500).send({
-        message: `Theres was a problem trying to set actors in movie.`,
+        message: `Theres was a problem trying to set actors in film.`,
         trace: err.message,
       });
     }
