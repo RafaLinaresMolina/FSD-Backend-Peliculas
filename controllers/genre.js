@@ -42,9 +42,9 @@ const GenreController = {
   async deleteGenresOfFilm(req, res) {
     {
       try {
-        const rowsAffected = FilmIsGenre.destroy({
+        const rowsAffected = await FilmIsGenre.destroy({
           where: {
-            id_film: req.params.FilmId,
+            id_film: +req.params.FilmId,
           },
         });
         if (!rowsAffected) {
