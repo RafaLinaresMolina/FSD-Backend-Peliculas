@@ -69,6 +69,36 @@ const FilmController = {
     }
   },
 
+  async getAllFilms(req, res) {
+    try {
+      const films = await Film.findAll({
+        include: [
+          {
+            model: Genre,
+            required: true,
+            through: {
+              attributes: [],
+            },
+          },
+          {
+            model: Actor,
+            required: true,
+            through: {
+              attributes: [],
+            },
+          },
+        ],
+      });
+      res.send(films);
+    } catch (err) {
+      process.log.error(err);
+      res.status(500).send({
+        message: "There was a problem trying to get the Films",
+        trace: err.message,
+      });
+    }
+  },
+
   async getFilmByGenreName(req, res) {
     try {
       const films = await Film.findAll({
@@ -193,6 +223,34 @@ const FilmController = {
         ],
       });
       res.send(films);
+    } catch (err) {
+      process.log.error(err);
+      res.status(500).send({
+        message: "There was a problem trying to get the Films by name",
+        trace: err.message,
+      });
+    }
+  },
+  async delete(req, res) {
+    try {
+      const film = await Film.findByPk(req.params.id);
+      film.status = 0;
+      film.save();
+      res.send({message: `Film '${film.title}' deleted.`});
+    } catch (err) {
+      process.log.error(err);
+      res.status(500).send({
+        message: "There was a problem trying to get the Films by name",
+        trace: err.message,
+      });
+    }
+  },
+  async reactivate(req, res) {
+    try {
+      const film = await Film.findByPk(req.params.id);
+      film.status = 1;
+      film.save();
+      res.send({message: `Film '${film.title}' reactivated.`});
     } catch (err) {
       process.log.error(err);
       res.status(500).send({
