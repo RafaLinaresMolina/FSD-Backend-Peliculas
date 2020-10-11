@@ -20,6 +20,34 @@ const ActorController = {
         trace: err.message,
       });
     }
+  },
+  async delete(req, res) {
+    try {
+      const actor = await Actor.findByPk(req.params.id);
+      actor.status = 0;
+      actor.save();
+      res.send({message: `Actor with name ${actor.name} ${actor.last_name} was deleted`});
+    } catch (err) {
+      procces.log.error(err);
+      res.status(500).send({
+        message: "There was a problem trying to get the Actors by name",
+        trace: err.message,
+      });
+    }
+  },
+  async reactivate(req, res) {
+    try {
+      const actor = await Actor.findByPk(req.params.id);
+      actor.status = 1;
+      actor.save();
+      res.send({message: `Actor with name ${actor.name} ${actor.last_name} was reactivated`});
+    } catch (err) {
+      procces.log.error(err);
+      res.status(500).send({
+        message: "There was a problem trying to get the Actors by name",
+        trace: err.message,
+      });
+    }
   }
 };
 

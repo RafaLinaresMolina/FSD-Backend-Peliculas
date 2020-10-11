@@ -81,7 +81,7 @@ const ActorAppearFilmController = {
   async deleteActorsFilm(req, res) {
     {
       try {
-        const rowsAffected = ActorAppearFilm.destroy({
+        const rowsAffected = await ActorAppearFilm.destroy({
           where: {
             id_film: req.params.ActorId,
           },
