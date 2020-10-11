@@ -20,7 +20,7 @@ const GenreController = {
       });
     }
   },
-  async create(req, res) {
+  async createGenereFilm(req, res) {
     let genreInFilm;
     try {
       const newGenreInFilm = await createObject(
@@ -39,12 +39,12 @@ const GenreController = {
       });
     }
   },
-  async delete(req, res) {
+  async deleteGenresOfFilm(req, res) {
     {
       try {
         const rowsAffected = FilmIsGenre.destroy({
           where: {
-            id_film: req.params.id,
+            id_film: req.params.FilmId,
           },
         });
         if (!rowsAffected) {

@@ -57,7 +57,7 @@ const ActorAppearFilmController = {
       });
     }
   },
-  async create(req, res) {
+  async createActorFilm(req, res) {
     let ActorsAppearInFilmInstance;
     try {
       const newActorsInFilm = await createObject(
@@ -78,12 +78,12 @@ const ActorAppearFilmController = {
       });
     }
   },
-  async delete(req, res) {
+  async deleteActorsFilm(req, res) {
     {
       try {
         const rowsAffected = ActorAppearFilm.destroy({
           where: {
-            id_film: req.params.id,
+            id_film: req.params.ActorId,
           },
         });
 
