@@ -61,6 +61,45 @@ const ActorAppearFilmController = {
         });
     }
   },
+  async create(req, res) {
+    let ActorsAppearInFilmInstance;
+    try {
+      const newActorsInFilm = await createObject(req.body.film_id, req.body.Actors);
+      process.log.debug(`Aux objects generated`);
+      ActorsAppearInFilmInstance = await ActorAppearFilm.bulkCreate(newActorsInFilm);
+      process.log.info('newActorsInFilm rows created');
+      res.status(201).send(ActorsAppearInFilmInstance);
+    } catch (err) {
+      process.log.error(err.message);
+      res.status(500).send({
+        message: `Theres was a problem trying to set actors in movie.`,
+        trace: err.message,
+      });
+    }
+  }
+};
+
+const createObject = async (film_id, ActorsInFilm) => {
+  try {
+    const film = await Film.findByPk(film_id);
+    if(!film){
+      throw new Error(`Film with id ${film_id} does not exist.`);
+    }
+    const newActorsInFilm = [];
+    for (const i in ActorsInFilm) {
+      const element = ActorsInFilm[i];
+      process.log.info(element);
+      const actor = await Actor.findByPk(element.ActorId);
+      if(!actor){
+        throw new Error(`Actor with id ${element.ActorId} does not exist.`); 
+      }
+      newActorsInFilm.push({ id_film: film_id, id_actor: actor.id });
+    }
+    return newActorsInFilm;
+  } catch (err) {
+    process.log.error(err.message);
+    throw err;
+  }
 };
 
 module.exports = ActorAppearFilmController;

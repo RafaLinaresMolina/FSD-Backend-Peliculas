@@ -2,6 +2,7 @@ const { Film, Sequelize } = require("../models");
 const Op = Sequelize.Op;
 
 const FilmController = {
+
   async getFilmByName(req, res) {
     Film.findAll({
       where: {
