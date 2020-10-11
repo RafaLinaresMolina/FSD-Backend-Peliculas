@@ -8,13 +8,13 @@ Order.belongsTo(User, {
 Order.belongsToMany(Film, {
   as: "Films",
   through: { model: OrderFilm },
-  foreignKey: "FilmIdm"
+  foreignKey: "FilmIdm",
 });
 
 Film.belongsToMany(Order, {
   as: "OrderWithFilms",
   through: { model: OrderFilm },
-  foreignKey: "OrderId"
+  foreignKey: "OrderId",
 });
 
 const OrderController = {
@@ -25,13 +25,13 @@ const OrderController = {
           {
             model: Film,
             required: true,
-            through: { atributes: ['stock'] }
+            through: { atributes: ["stock"] },
           },
         ],
       });
       res.send(orders);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      process.log.error(err.message);
       res.status(500).send({
         message: `Unable to get the ${Order.name} resource`,
         trace: error.message,
@@ -42,24 +42,24 @@ const OrderController = {
     try {
       const order = await Order.findAll({
         where: {
-          UserId: req.params.id
+          UserId: req.params.id,
         },
         include: [
           {
             model: Film,
             required: true,
             through: {
-              attributes: ['stock'],
+              attributes: ["stock"],
             },
           },
         ],
       });
       res.send(order);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      process.log.error(err.message);
       res.status(500).send({
         message: `Unable to retrive the specified ${Order.name} resource`,
-        trace: error.message,
+        trace: err.message,
       });
     }
   },
@@ -74,84 +74,131 @@ const OrderController = {
             model: Film,
             required: true,
             through: {
-              attributes: ['stock'],
+              attributes: ["stock"],
             },
           },
         ],
       });
       res.send(order);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      process.log.error(err.message);
       res.status(500).send({
         message: `Unable to retrive the specified ${Order.name} resource`,
-        trace: error.message,
+        trace: err.message,
       });
     }
   },
   async create(req, res) {
+    let value;
+    let films;
+    let OrderFilmInstance;
     try {
-      const value = await Order.create(req.body);
-      process.log.data(value);
+      const newOrderFilms = await checkStockage(req.body.Films);
+      const order = { UserId: req.body.UserId };
+      process.log.debug(`Aux objects generated`);
+      value = await Order.create(order);
+      process.log.debug(`Order created`);
+      setOrderIdOnOrderMovie(value.id, newOrderFilms);
+      OrderFilmInstance = await OrderFilm.bulkCreate(newOrderFilms);
+      process.log.info('OrderFilm rows created')
+      await stockBalancing(req.body.Films);
+      process.log.info('res')
       res.status(201).send(value);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      let idForDelete;
+      if (OrderFilmInstance) {
+        await OrderFilm.destroy(OrderFilmInstance, {where: {OrderId: idForDelete}});
+        process.log.warning('OrderMovie being reverted...');
+      }
+      if (value) {
+        idForDelete = value.id;
+        await Order.destroy(value, {where: {id: idForDelete}});
+        process.log.warning('Order being reverted...');
+      }
+      process.log.error(err.message);
       res.status(500).send({
         message: `Theres was a problem trying to create the ${Order.name} resource`,
-        trace: error.message,
+        trace: err.message,
       });
     }
-  },
-  async update(req, res) {
+  },async updateStatus(req, res) {
     try {
-      const [rowsAffected] = await Order.update(req.body, {
-        where: {
-          id: req.params.id,
-        },
-      });
-      process.log.debug(`Rows affected: ${Order.name}`);
-      if (!rowsAffected) {
-        return res.send({
-          message: "Nothing to update",
-          rowsAffected,
-        });
-      }
-      res.send({
-        message: "resource successfully updated",
-        rowsAffected,
-      });
+      
     } catch (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Theres was a problem trying to update the ${Order.name} resource`,
-        trace: error.message,
-      });
+      
     }
-  },
+  }
+};
 
-  async delete(req, res) {
-    try {
-      const rowsAffected = Order.destroy({
-        where: {
-          id: req.params.id,
-        },
-      });
 
-      if (!rowsAffected) {
-        return res.send({
-          message: "Nothing to delete",
-          rowsAffected,
-        });
-      }
-
-      return res.send({ message: "resource deleted", rowsAffected });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send({
-        message: `Theres was a problem trying to delete the ${Order.name} resource`,
-        trace: error.message,
-      });
+const isStockEnough = async (filmId, quantity) => {
+  try {
+    const film = await Film.findByPk(filmId);
+    if (!film) {
+      throw new Error(`Film with ID ${filmId} not found`);
     }
-  },
+    if(quantity <= 0){
+      throw new Error(`Quantity must be a number over 0 and integer.`);
+    }
+    if (!film.stock || film.stock < quantity) {
+      throw new Error(`The film '${film.title}' is out of stock`);
+    }
+  } catch (err) {
+    process.log.error(err.message);
+    throw err;
+  }
+};
+
+const checkStockage = async (filmsForNewOrder) => {
+  try {
+    const newOrderFilm = [];
+    for (const i in filmsForNewOrder) {
+      const element = filmsForNewOrder[i];
+      process.log.info(element);
+      await isStockEnough(element.FilmId, element.quantity);
+      newOrderFilm.push({ FilmId: element.FilmId, stock: element.quantity });
+    }
+    return newOrderFilm;
+  } catch (err) {
+    process.log.error(err.message);
+    throw err;
+  }
+};
+
+const stockBalancing = async (films) => {
+  try {
+    process.log.info('stockBalancing')
+    for (const film of films) {
+      const value = await removeFilmFromStock(film.FilmId, film.quantity);
+      process.log.info(value)
+    }
+  } catch (err) {
+    process.log.error(err.message);
+    throw err;
+  }
+};
+
+const removeFilmFromStock = async (FilmId, quantity) => {
+  try {
+    process.log.debug(`${FilmId}:${quantity}`)
+    const film = await Film.findByPk(FilmId);
+    if (!film.stock < quantity) {
+      process.log.debug(film)
+      film.stock -= quantity;
+      await film.save();
+    } else {
+      throw new Error(`You cant get movies if there are none.`);
+    }
+  } catch (err) {
+    process.log.error(err.message);
+    throw err;
+  }
+};
+
+const setOrderIdOnOrderMovie = (OrderId, newOrderFilms) => {
+  for (const orderFilm of newOrderFilms) {
+    orderFilm.OrderId = OrderId;
+  }
 };
 
 module.exports = OrderController;
