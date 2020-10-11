@@ -81,7 +81,7 @@ class GenericController {
     }
   };
 
-  delete = (req, res) => {
+  delete = async (req, res) => {
     try {
       const rowsAffected = this.model.destroy({
         where: {
