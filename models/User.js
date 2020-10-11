@@ -18,7 +18,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     email: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: true,
+      validate:  {
+        isEmail: true
+      },
+      unique: "email"
     },
     password: {
       type: DataTypes.STRING(255),
@@ -42,6 +46,16 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: sequelize.fn('current_timestamp')
+    },
+    token: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: "''"
+    },
+    confirmed: {
+      type: DataTypes.INTEGER(4),
+      allowNull: true,
+      defaultValue: 0
     }
   }, {
     sequelize,
