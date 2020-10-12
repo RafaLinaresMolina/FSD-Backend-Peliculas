@@ -12,6 +12,10 @@ From the POV of the user, you can signup, confirm your account, login, watch the
 
 From the POV of an administrator, you cah update status on orders, create films, actors, genre, make the relations between them and watch the users of the app. Also can deactivate users or throw them out of the sesion.
 
+### Data Structure
+
+![ER diagram](./diagrams/ER.png)
+
 ### Software needed
 - nodejs lts (at the time, version 12.19.0)
 - mysql or mariadb installed and running
