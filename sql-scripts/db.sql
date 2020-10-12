@@ -119,8 +119,11 @@ CREATE TABLE `Order` (
   `recomendedReturnDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `realReturnDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `reStoked` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `PriceId` int(11) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `FK_Order_Has_User` (`UserId`),
+  KEY `FK_OrderPrice` (`PriceId`),
+  CONSTRAINT `FK_OrderPrice` FOREIGN KEY (`PriceId`) REFERENCES `Price` (`id`),
   CONSTRAINT `FK_Order_Has_User` FOREIGN KEY (`UserId`) REFERENCES `User` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -192,4 +195,4 @@ CREATE TABLE `User` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-12 11:55:24
+-- Dump completed on 2020-10-12 20:30:39
