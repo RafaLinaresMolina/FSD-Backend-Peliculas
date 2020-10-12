@@ -102,6 +102,34 @@ const OrderController = {
       });
     }
   },
+  async getByUserLogged(req, res) {
+    try {
+      const order = await Order.findOne({
+        where: {UserId: req.user.id},
+        include: [
+          {
+            model: Film,
+            required: true,
+            through: {
+              attributes: ["stock"],
+            },
+          },
+          {
+            model: Price,
+            required: true,
+          },
+        ],
+      });
+      const calculatedOrders = calculatePrice(order.toJSON());
+      res.send(calculatedOrders);
+    } catch (err) {
+      process.log.error(err.message);
+      res.status(500).send({
+        message: `Unable to retrive the specified ${Order.name} resource`,
+        trace: err,
+      });
+    }
+  },
   async update(req, res) {
     try {
       const order = await Order.findByPk(req.params.id,{
