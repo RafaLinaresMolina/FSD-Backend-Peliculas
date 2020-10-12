@@ -1,4 +1,4 @@
-const { User, Order, OrderFilm, Film, Sequelize } = require("../models");
+const { User, Order, OrderFilm, Film, Price, Sequelize } = require("../models");
 
 Order.belongsTo(User, {
   through: { model: Film },
@@ -17,6 +17,8 @@ Film.belongsToMany(Order, {
   foreignKey: "OrderId",
 });
 
+Order.belongsTo(Price);
+
 const OrderController = {
   async getAll(req, res) {
     try {
@@ -26,6 +28,9 @@ const OrderController = {
             model: Film,
             required: true,
             through: { atributes: ["stock"] },
+          },{
+            model: Price,
+            required: true,
           },
         ],
       });
@@ -34,7 +39,7 @@ const OrderController = {
       process.log.error(err.message);
       res.status(500).send({
         message: `Unable to get the ${Order.name} resource`,
-        trace: error,
+        trace: err,
       });
     }
   },
@@ -51,6 +56,10 @@ const OrderController = {
             through: {
               attributes: ["stock"],
             },
+					},
+					{
+            model: Price,
+            required: true,
           },
         ],
       });
@@ -76,9 +85,26 @@ const OrderController = {
             through: {
               attributes: ["stock"],
             },
+          },{
+            model: Price,
+            required: true,
           },
         ],
       });
+      res.send(order);
+    } catch (err) {
+      process.log.error(err.message);
+      res.status(500).send({
+        message: `Unable to retrive the specified ${Order.name} resource`,
+        trace: err,
+      });
+    }
+  },
+  async update(req, res) {
+    try {
+      const order = await Order.findByPk(req.params.id);
+      updateStatus(order);
+      order.status = req.params.status;
       res.send(order);
     } catch (err) {
       process.log.error(err.message);
@@ -99,20 +125,22 @@ const OrderController = {
       process.log.debug(`Order created`);
       setOrderIdOnOrderMovie(value.id, newOrderFilms);
       OrderFilmInstance = await OrderFilm.bulkCreate(newOrderFilms);
-      process.log.info('OrderFilm rows created')
+      process.log.info("OrderFilm rows created");
       await stockBalancing(req.body.Films);
-      process.log.info('res')
+      process.log.info("res");
       res.status(201).send(value);
     } catch (err) {
       let idForDelete;
       if (OrderFilmInstance) {
-        await OrderFilm.destroy(OrderFilmInstance, {where: {OrderId: idForDelete}});
-        process.log.warning('OrderMovie being reverted...');
+        await OrderFilm.destroy(OrderFilmInstance, {
+          where: { OrderId: idForDelete },
+        });
+        process.log.warning("OrderMovie being reverted...");
       }
       if (value) {
         idForDelete = value.id;
-        await Order.destroy(value, {where: {id: idForDelete}});
-        process.log.warning('Order being reverted...');
+        await Order.destroy(value, { where: { id: idForDelete } });
+        process.log.warning("Order being reverted...");
       }
       process.log.error(err.message);
       res.status(500).send({
@@ -120,15 +148,32 @@ const OrderController = {
         trace: err,
       });
     }
-  },async updateStatus(req, res) {
-    try {
-      
-    } catch (error) {
-      
-    }
-  }
+  },
 };
 
+const updateStatus = (order, status) => {
+	const date = new Date();
+  const statusObject = {
+    sended(order){
+			order.status = status;
+		},
+    client(order){
+			order.status = status;
+			order.arrivedAtClient = date;
+			//order.recomendedReturnDate = date.setDate(date.getDay + )
+		},
+    returning(order){
+			order.status = status;
+			order.arrivedAtClient = new Date();
+		},
+    stocked(order){
+			order.status = status;
+			order.arrivedAtClient = new Date();
+		},
+	};
+	
+	statusObject['status'](order);
+};
 
 const isStockEnough = async (filmId, quantity) => {
   try {
@@ -136,7 +181,7 @@ const isStockEnough = async (filmId, quantity) => {
     if (!film) {
       throw new Error(`Film with ID ${filmId} not found`);
     }
-    if(quantity <= 0){
+    if (quantity <= 0) {
       throw new Error(`Quantity must be a number over 0 and integer.`);
     }
     if (!film.stock || film.stock < quantity) {
@@ -166,10 +211,10 @@ const checkStockage = async (filmsForNewOrder) => {
 
 const stockBalancing = async (films) => {
   try {
-    process.log.info('stockBalancing')
+    process.log.info("stockBalancing");
     for (const film of films) {
       const value = await removeFilmFromStock(film.FilmId, film.quantity);
-      process.log.info(value)
+      process.log.info(value);
     }
   } catch (err) {
     process.log.error(err.message);
@@ -179,10 +224,10 @@ const stockBalancing = async (films) => {
 
 const removeFilmFromStock = async (FilmId, quantity) => {
   try {
-    process.log.debug(`${FilmId}:${quantity}`)
+    process.log.debug(`${FilmId}:${quantity}`);
     const film = await Film.findByPk(FilmId);
     if (!film.stock < quantity) {
-      process.log.debug(film)
+      process.log.debug(film);
       film.stock -= quantity;
       await film.save();
     } else {

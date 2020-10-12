@@ -46,6 +46,16 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: "0000-00-00 00:00:00"
+    },
+    PriceId: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: 1,
+      references: {
+        model: 'Price',
+        key: 'id'
+      },
+      unique: "FK_OrderPrice"
     }
   }, {
     sequelize,
