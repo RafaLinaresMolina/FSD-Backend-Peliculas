@@ -2,6 +2,9 @@
 
 This is a project to introduce the use of nodejs, express, sequelize and mysql.
 
+### Where to test the demo
+-> https://back4films.herokuapp.com/
+
 ### A bit of background
 This is an example of a backend for a blockbuster type of app.
 
@@ -105,7 +108,8 @@ We have this prefixes:
     - GET / -> Get all the prices types
     - POST / -> Create a new price [Logged, Admin]
     - PUT /:id -> Edit a given price [Logged, Admin]
-    - DELETE /:id -> Delete a given price [Logged, Admin]
+    - DELETE /:id -> Deactivate a given price [Logged, Admin]
+    - PUT /reactivate/:id -> Reactivate a given price [Logged, Admin]
 
   - /orders: Only Admins have acces
     - GET / -> Get All the orders (with the relations) [Logged, Admin]
