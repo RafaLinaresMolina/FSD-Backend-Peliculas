@@ -120,8 +120,7 @@ const OrderController = {
         ],
       });
 			await updateStatus(order, req.params.status);
-			const calculatedOrder = calculatePrice(order.toJSON());
-      res.send(calculatedOrder);
+      res.send(`Status of order '${order.id}' updated.`);
     } catch (err) {
       process.log.error(err.message);
       res.status(500).send({
