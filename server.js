@@ -28,9 +28,8 @@ const init = () => {
   app.use("/profile", profileRouter);
   app.use("/films", filmRouter);
   app.use("/actors", actorsRouter);
-  
   app.use("/genres", genreRouter);
-  
+
   app.use("/prices", priceRouter);
   app.use("/orders", OrderRouter);
   app.use("/orderfilm", OrderFilmRouter);

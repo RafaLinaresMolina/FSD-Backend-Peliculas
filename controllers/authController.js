@@ -80,6 +80,7 @@ const AuthController = {
         {
           where: {
             id: payload.id,
+            status: 1,
           },
         }
       );
