@@ -6,15 +6,10 @@ Order.belongsTo(User, {
 });
 
 Order.belongsToMany(Film, {
-  as: "Films",
   through: { model: OrderFilm },
-  foreignKey: "FilmIdm",
 });
-
 Film.belongsToMany(Order, {
-  as: "OrderWithFilms",
   through: { model: OrderFilm },
-  foreignKey: "OrderId",
 });
 
 Order.belongsTo(Price);
