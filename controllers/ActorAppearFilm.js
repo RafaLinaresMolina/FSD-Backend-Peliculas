@@ -83,7 +83,7 @@ const ActorAppearFilmController = {
       try {
         const rowsAffected = await ActorAppearFilm.destroy({
           where: {
-            id_film: req.params.ActorId,
+            id_film: req.params.FilmId,
           },
         });
 

@@ -18,6 +18,6 @@ router.put('/reactivate/:id', auth.loggedRequired, auth.adminRequired, ActorCont
 router.get('/actorInFilms/:id', ActorAppearFilmController.getFilmsByActorId);
 router.get('/filmActors/:id', ActorAppearFilmController.getActorsFromFilmById);
 router.post('/actorsfromfilm/addactors', auth.loggedRequired, auth.adminRequired, ActorAppearFilmController.createActorFilm);
-router.delete('/actorsfromfilm/removeactors/:ActorId', auth.loggedRequired, auth.adminRequired, ActorAppearFilmController.deleteActorsFilm);
+router.delete('/actorsfromfilm/removeactors/:FilmId', auth.loggedRequired, auth.adminRequired, ActorAppearFilmController.deleteActorsFilm);
 
 module.exports = router;
