@@ -1,0 +1,28 @@
+{
+	"minimumLevelLog" : 4,
+  "0": {
+    "frontStyle": "color: red; font-weight: bold;",
+    "header": "[ ##DATE## ] † ERROR: ",
+    "nodeFontColor": "PREFIX[31mPREFIX[1m"
+  },
+  "1": {
+    "frontStyle": "color: orange; font-weight: bold;",
+    "header": "[ ##DATE## ] ▲ WARNING: ",
+    "nodeFontColor": "PREFIX[33mPREFIX[5m"
+  },
+  "2": {
+    "frontStyle": "color: orange; font-weight: bold;",
+    "header": "[ ##DATE## ] # DEBUG: ",
+    "nodeFontColor": "PREFIX[36m"
+  },
+  "3": {
+    "frontStyle": "color: lightblue; font-weight: bold;",
+    "header": "[ ##DATE## ] • INFO: ",
+    "nodeFontColor": "PREFIX[34m"
+  },
+  "4": {
+    "frontStyle": "color: lightgreen; font-weight: bold;",
+    "header": "[ ##DATE## ] ► DATA: ",
+    "nodeFontColor": "PREFIX[32m"
+  }
+}
