@@ -39,7 +39,14 @@ Film.belongsToMany(Actor, {
 const FilmController = {
   async getFilmByName(req, res) {
     try {
-      const films = await Film.findAll({
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const films = await Film.findAndCountAll({
         where: {
           [Op.or]: {
             original_title: {
@@ -85,7 +92,7 @@ const FilmController = {
       else {
         offset = +req.query.offset
       }
-      const films = await Film.findAndCountAll({
+      const films = await Film.findAndCountAll({ distinct: true,
         offset,
           limit: +process.env.LIMIT_FILMS,
         include: [
@@ -118,7 +125,8 @@ const FilmController = {
 
   async getFilmByGenreName(req, res) {
     try {
-      const films = await Film.findAll({
+console.log(req.params.name)
+      const films = await Film.findAndCountAll({distinct:true,
         include: [{
             model: Genre,
             where: {
@@ -143,6 +151,7 @@ const FilmController = {
       res.send(films);
     } catch (err) {
       process.log.error(err);
+      console.log(err)
       res.status(500).send({
         message: "There was a problem trying to get the Films by name",
         trace: err,
@@ -151,7 +160,14 @@ const FilmController = {
   },
   async getFilmByActorName(req, res) {
     try {
-      const films = await Film.findAll({
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const films = await Film.findAndCountAll({ distinct:true,
         include: [{
             model: Genre,
             required: true,
@@ -184,7 +200,14 @@ const FilmController = {
   },
   async getFilmByGenreId(req, res) {
     try {
-      const films = await Film.findAll({
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const films = await Film.findAndCountAll({ distinct:true,
         
         include: [{
             model: Genre,
@@ -216,7 +239,14 @@ const FilmController = {
   },
   async getFilmByActorId(req, res) {
     try {
-      const films = await Film.findAll({
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const films = await Film.findAndCountAll({ distinct:true,
         include: [{
             model: Genre,
             required: true,
