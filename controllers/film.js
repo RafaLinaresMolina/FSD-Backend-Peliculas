@@ -259,6 +259,18 @@ const FilmController = {
       });
     }
   },
-};
+  async countFilms(req,res) {
+      try {
+        const films = await Film.findAndCountAll({
+         offset: 2,
+         limit: 4
+      })
+     res.status(200).send(films);
+    }catch(err){
+      console.log(err);
+      res.status(400).send(err);
+    }
+  }
+}
 
 module.exports = FilmController;
