@@ -9,29 +9,44 @@ const {
 const Op = Sequelize.Op;
 
 Film.belongsToMany(Genre, {
-  through: { model: FilmIsGenre },
+  through: {
+    model: FilmIsGenre
+  },
   foreignKey: "id_genre",
 });
 
 Genre.belongsToMany(Film, {
-  through: { model: FilmIsGenre },
+  through: {
+    model: FilmIsGenre
+  },
   foreignKey: "id_film",
 });
 
 Actor.belongsToMany(Film, {
-  through: { model: ActorAppearFilm },
+  through: {
+    model: ActorAppearFilm
+  },
   foreignKey: "id_film",
 });
 
 Film.belongsToMany(Actor, {
-  through: { model: ActorAppearFilm },
+  through: {
+    model: ActorAppearFilm
+  },
   foreignKey: "id_actor",
 });
 
 const FilmController = {
   async getFilmByName(req, res) {
     try {
-      const films = await Film.findAll({
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const films = await Film.findAndCountAll({
         where: {
           [Op.or]: {
             original_title: {
@@ -42,8 +57,7 @@ const FilmController = {
             },
           },
         },
-        include: [
-          {
+        include: [{
             model: Genre,
             required: true,
             through: {
@@ -71,8 +85,18 @@ const FilmController = {
 
   async getAllFilms(req, res) {
     try {
-      const films = await Film.findAll({
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const films = await Film.findAndCountAll({ distinct: true,
+        offset,
+          limit: +process.env.LIMIT_FILMS,
         include: [
+          
           {
             model: Genre,
             required: true,
@@ -101,9 +125,9 @@ const FilmController = {
 
   async getFilmByGenreName(req, res) {
     try {
-      const films = await Film.findAll({
-        include: [
-          {
+console.log(req.params.name)
+      const films = await Film.findAndCountAll({distinct:true,
+        include: [{
             model: Genre,
             where: {
               name: {
@@ -127,6 +151,7 @@ const FilmController = {
       res.send(films);
     } catch (err) {
       process.log.error(err);
+      console.log(err)
       res.status(500).send({
         message: "There was a problem trying to get the Films by name",
         trace: err,
@@ -135,9 +160,15 @@ const FilmController = {
   },
   async getFilmByActorName(req, res) {
     try {
-      const films = await Film.findAll({
-        include: [
-          {
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const films = await Film.findAndCountAll({ distinct:true,
+        include: [{
             model: Genre,
             required: true,
             through: {
@@ -169,9 +200,16 @@ const FilmController = {
   },
   async getFilmByGenreId(req, res) {
     try {
-      const films = await Film.findAll({
-        include: [
-          {
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const films = await Film.findAndCountAll({ distinct:true,
+        
+        include: [{
             model: Genre,
             where: {
               id: +req.params.id,
@@ -201,9 +239,15 @@ const FilmController = {
   },
   async getFilmByActorId(req, res) {
     try {
-      const films = await Film.findAll({
-        include: [
-          {
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const films = await Film.findAndCountAll({ distinct:true,
+        include: [{
             model: Genre,
             required: true,
             through: {
@@ -236,7 +280,9 @@ const FilmController = {
       const film = await Film.findByPk(req.params.id);
       film.status = 0;
       await film.save();
-      res.send({message: `Film '${film.title}' deleted.`});
+      res.send({
+        message: `Film '${film.title}' deleted.`
+      });
     } catch (err) {
       process.log.error(err);
       res.status(500).send({
@@ -250,7 +296,9 @@ const FilmController = {
       const film = await Film.findByPk(req.params.id);
       film.status = 1;
       await film.save();
-      res.send({message: `Film '${film.title}' reactivated.`});
+      res.send({
+        message: `Film '${film.title}' reactivated.`
+      });
     } catch (err) {
       process.log.error(err);
       res.status(500).send({
@@ -259,6 +307,26 @@ const FilmController = {
       });
     }
   },
-};
+  async countFilms(req, res) {
+    try {
+       let offset;
+       if (!req.query.offset){
+        offset = 0; 
+       }
+       else {
+         offset = +req.query.offset
+       }
+
+      const films = await Film.findAndCountAll({
+        offset:offset,
+        limit: +process.env.LIMIT_FILMS
+      })
+      res.status(200).send(films);
+    } catch (err) {
+      console.log(err);
+      res.status(400).send(err);
+    }
+  }
+}
 
 module.exports = FilmController;

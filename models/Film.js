@@ -1,5 +1,7 @@
 /* jshint indent: 2 */
 
+
+
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Film', {
     id: {
@@ -49,3 +51,4 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'Film'
     });
 };
+
