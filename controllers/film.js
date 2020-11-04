@@ -78,8 +78,19 @@ const FilmController = {
 
   async getAllFilms(req, res) {
     try {
-      const films = await Film.findAll({
-        include: [{
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const films = await Film.findAndCountAll({
+        offset,
+          limit: +process.env.LIMIT_FILMS,
+        include: [
+          
+          {
             model: Genre,
             required: true,
             through: {
@@ -174,6 +185,7 @@ const FilmController = {
   async getFilmByGenreId(req, res) {
     try {
       const films = await Film.findAll({
+        
         include: [{
             model: Genre,
             where: {
@@ -268,16 +280,16 @@ const FilmController = {
   async countFilms(req, res) {
     try {
        let offset;
-       if (!req.params.offset){
+       if (!req.query.offset){
         offset = 0; 
        }
        else {
-         offset = +req.paramas.offset
+         offset = +req.query.offset
        }
 
       const films = await Film.findAndCountAll({
-        offset,
-        limit: process.env.LIMIT_FILMS
+        offset:offset,
+        limit: +process.env.LIMIT_FILMS
       })
       res.status(200).send(films);
     } catch (err) {
