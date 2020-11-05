@@ -36,8 +36,8 @@ const AuthController = {
       await user.save();
       res.send({ token: user.token });
     } catch (error) {
-      console.error(error);
-      res.status(500).send({ message: "There was a problem trying to login" });
+      process.log.error(error.message);
+      res.status(400).send({ message: "There was a problem trying to login", trace: error.message });
     }
   },
   async signup(req, res) {
