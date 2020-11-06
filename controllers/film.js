@@ -125,6 +125,13 @@ const FilmController = {
 
   async getFilmByGenreName(req, res) {
     try {
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
 console.log(req.params.name)
       const films = await Film.findAndCountAll({distinct:true,
         include: [{
@@ -278,6 +285,9 @@ console.log(req.params.name)
   async delete(req, res) {
     try {
       const film = await Film.findByPk(req.params.id);
+      if(!film){
+        return res.status(400).send({message:'Film not found'})
+      }
       film.status = 0;
       await film.save();
       res.send({
@@ -294,6 +304,9 @@ console.log(req.params.name)
   async reactivate(req, res) {
     try {
       const film = await Film.findByPk(req.params.id);
+      if(!film){
+        return res.status(400).send({message:'Film not found'})
+      }
       film.status = 1;
       await film.save();
       res.send({

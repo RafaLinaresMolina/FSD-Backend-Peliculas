@@ -17,6 +17,13 @@ Order.belongsTo(Price);
 const OrderController = {
   async getAll(req, res) {
     try {
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
       const orders = await Order.findAll({
         include: [
           {
@@ -30,6 +37,9 @@ const OrderController = {
           },
         ],
       });
+      if(!orders){
+        return res.status(400).send({message:'Orders not found'})
+      }
       const calculatedOrders = calculatePrices(orders);
       res.send(calculatedOrders);
     } catch (err) {
@@ -42,6 +52,13 @@ const OrderController = {
   },
   async getByUserId(req, res) {
     try {
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
       const orders = await Order.findAll({
         where: {
           UserId: req.params.id,
@@ -60,6 +77,9 @@ const OrderController = {
           },
         ],
       });
+      if(!orders){
+        return res.status(400).send({message:'Orders not found'})
+      }
       const calculatedOrders = calculatePrices(orders);
       res.send(calculatedOrders);
     } catch (err) {
@@ -72,6 +92,13 @@ const OrderController = {
   },
   async getById(req, res) {
     try {
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
       const order = await Order.findByPk(req.params.id, {
         include: [
           {
@@ -87,6 +114,9 @@ const OrderController = {
           },
         ],
       });
+      if(!order){
+        return res.status(400).send({message:'Order not found'})
+      }
       const calculatedOrders = calculatePrice(order.toJSON());
       res.send(calculatedOrders);
     } catch (err) {
@@ -99,6 +129,13 @@ const OrderController = {
   },
   async getByUserLogged(req, res) {
     try {
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
       const order = await Order.findOne({
         where: {UserId: req.user.id},
         include: [
@@ -115,6 +152,9 @@ const OrderController = {
           },
         ],
       });
+      if(!order){
+        return res.status(400).send({message:'Order not found'})
+      }
       const calculatedOrders = calculatePrice(order.toJSON());
       res.send(calculatedOrders);
     } catch (err) {
@@ -127,6 +167,13 @@ const OrderController = {
   },
   async update(req, res) {
     try {
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
       const order = await Order.findByPk(req.params.id,{
         include: [
           {
@@ -142,6 +189,9 @@ const OrderController = {
           },
         ],
       });
+      if(!order){
+        return res.status(400).send({message:'Order not found'})
+      }
 			await updateStatus(order, req.params.status);
       res.send(`Status of order '${order.id}' updated.`);
     } catch (err) {
@@ -211,6 +261,13 @@ const calculatePrice = (order) => {
 
 const updateStatus = async (order, status) => {
   try{
+    let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
 		const date = new Date();
     const statusObject = {
     sended(order) {
@@ -261,6 +318,13 @@ const restockFilms = async (films) =>{
 
 const isStockEnough = async (filmId, quantity) => {
   try {
+    let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
     const film = await Film.findByPk(filmId);
     if (!film) {
       throw new Error(`Film with ID ${filmId} not found`);
@@ -279,6 +343,13 @@ const isStockEnough = async (filmId, quantity) => {
 
 const checkStockage = async (filmsForNewOrder) => {
   try {
+    let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
     const newOrderFilm = [];
     for (const i in filmsForNewOrder) {
       const element = filmsForNewOrder[i];
@@ -295,6 +366,13 @@ const checkStockage = async (filmsForNewOrder) => {
 
 const stockBalancing = async (films) => {
   try {
+    let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
     process.log.info("stockBalancing");
     for (const film of films) {
       const value = await removeFilmFromStock(film.FilmId, film.quantity);
@@ -308,6 +386,13 @@ const stockBalancing = async (films) => {
 
 const removeFilmFromStock = async (FilmId, quantity) => {
   try {
+    let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
     process.log.debug(`${FilmId}:${quantity}`);
     const film = await Film.findByPk(FilmId);
     if (!film.stock < quantity) {
