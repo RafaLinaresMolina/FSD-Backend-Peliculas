@@ -5,7 +5,17 @@ const ActorController = {
 
   async getByName(req, res) {
     try {
-      const actors = await Actor.findAll({
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const actors = await Actor.findAndCountAll({
+        distinct: true,
+        offset,
+        limit: +process.env.LIMIT_FILMS,
         where: {
           name: {
             [Op.like]: `%${req.params.name}%`,

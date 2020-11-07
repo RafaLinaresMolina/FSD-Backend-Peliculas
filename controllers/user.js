@@ -11,7 +11,11 @@ const UserController = {
       else {
         offset = +req.query.offset
       }
-      const users = await User.findAll();
+      const users = await User.findAndCountAll({
+        distinct: true,
+        offset,
+        limit: +process.env.LIMIT_FILMS,
+      });
       if(!users){
         return res.status(400).send({message:'Users not found'})
       }
@@ -25,13 +29,6 @@ const UserController = {
   },
   async getUserById(req, res) {
     try {
-      let offset;
-      if (!req.query.offset){
-      offset = 0; 
-      }
-      else {
-        offset = +req.query.offset
-      }
       const user = await User.findByPk(req.params.id);
       if(!user){
         return res.status(400).send({message:'User not found'})
