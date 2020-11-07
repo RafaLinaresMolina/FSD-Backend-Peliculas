@@ -8,7 +8,6 @@ const controller = new GenericController(Film);
 const auth = require("../middleware/auth");
 
 router.get('/', controller.getAll);
-router.get('/countFilms/offset/', filmController.countFilms)
 router.get('/:id', controller.getById);
 router.get('/film/fulldata/', filmController.getAllFilms);
 router.get('/title/:name', filmController.getFilmByName);
