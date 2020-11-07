@@ -104,7 +104,7 @@ dist
 .tern-port
 
 # Ignore config directories
-# config/config.json
+config/config.json
 
 # Ignore sequelize-auto command
 sequelize-auto.txt
