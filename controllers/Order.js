@@ -1,4 +1,4 @@
-const { User, Order, OrderFilm, Film, Price, Sequelize } = require("../models");
+const { User, Order, OrderFilm, Film, Price } = require("../models");
 
 Order.belongsTo(User, {
   through: { model: Film },
@@ -17,7 +17,16 @@ Order.belongsTo(Price);
 const OrderController = {
   async getAll(req, res) {
     try {
-      const orders = await Order.findAll({
+      let offset;
+      if (!req.query.offset) {
+        offset = 0;
+      } else {
+        offset = +req.query.offset;
+      }
+      const orders = await Order.findAndCountAll({
+        distinct: true,
+        offset,
+        limit: +process.env.LIMIT_FILMS,
         include: [
           {
             model: Film,
@@ -30,6 +39,9 @@ const OrderController = {
           },
         ],
       });
+      if (!orders) {
+        return res.status(400).send({ message: "Orders not found" });
+      }
       const calculatedOrders = calculatePrices(orders);
       res.send(calculatedOrders);
     } catch (err) {
@@ -42,7 +54,16 @@ const OrderController = {
   },
   async getByUserId(req, res) {
     try {
-      const orders = await Order.findAll({
+      let offset;
+      if (!req.query.offset) {
+        offset = 0;
+      } else {
+        offset = +req.query.offset;
+      }
+      const orders = await Order.findAndCountAll({
+        distinct: true,
+        offset,
+        limit: +process.env.LIMIT_FILMS,
         where: {
           UserId: req.params.id,
         },
@@ -60,6 +81,9 @@ const OrderController = {
           },
         ],
       });
+      if (!orders) {
+        return res.status(400).send({ message: "Orders not found" });
+      }
       const calculatedOrders = calculatePrices(orders);
       res.send(calculatedOrders);
     } catch (err) {
@@ -87,6 +111,9 @@ const OrderController = {
           },
         ],
       });
+      if (!order) {
+        return res.status(400).send({ message: "Order not found" });
+      }
       const calculatedOrders = calculatePrice(order.toJSON());
       res.send(calculatedOrders);
     } catch (err) {
@@ -99,8 +126,17 @@ const OrderController = {
   },
   async getByUserLogged(req, res) {
     try {
-      const order = await Order.findOne({
-        where: {UserId: req.user.id},
+      let offset;
+      if (!req.query.offset) {
+        offset = 0;
+      } else {
+        offset = +req.query.offset;
+      }
+      const order = await Order.findAndCountAll({
+        distinct: true,
+        offset,
+        limit: +process.env.LIMIT_FILMS,
+        where: { UserId: req.user.id },
         include: [
           {
             model: Film,
@@ -115,6 +151,9 @@ const OrderController = {
           },
         ],
       });
+      if (!order) {
+        return res.status(200).send([]);
+      }
       const calculatedOrders = calculatePrice(order.toJSON());
       res.send(calculatedOrders);
     } catch (err) {
@@ -127,7 +166,7 @@ const OrderController = {
   },
   async update(req, res) {
     try {
-      const order = await Order.findByPk(req.params.id,{
+      const order = await Order.findByPk(req.params.id, {
         include: [
           {
             model: Film,
@@ -142,7 +181,10 @@ const OrderController = {
           },
         ],
       });
-			await updateStatus(order, req.params.status);
+      if (!order) {
+        return res.status(400).send({ message: "Order not found" });
+      }
+      await updateStatus(order, req.params.status);
       res.send(`Status of order '${order.id}' updated.`);
     } catch (err) {
       process.log.error(err.message);
@@ -157,7 +199,10 @@ const OrderController = {
     let OrderFilmInstance;
     try {
       const newOrderFilms = await checkStockage(req.body.Films);
-      const order = { UserId: req.body.UserId };
+      const order = { UserId: req.user.id };
+      if(req.user.creditCard){
+        return res.status(400).send({message: 'must have credit card to create orders.'})
+      }
       process.log.debug(`Aux objects generated`);
       value = await Order.create(order);
       process.log.debug(`Order created`);
@@ -199,65 +244,66 @@ const calculatePrice = (order) => {
   if (order.realReturnDate) {
     const returnDate = new Date(order.realReturnDate);
     const recomendedDate = new Date(order.recomendedReturnDate);
-		const totalDays = returnDate.getDate() - recomendedDate.getDate();
-		if (totalDays > 0) {
-			const totalDays = returnDate.getDate() - recomendedDate.getDate();
+    const totalDays = returnDate.getDate() - recomendedDate.getDate();
+    if (totalDays > 0) {
+      const totalDays = returnDate.getDate() - recomendedDate.getDate();
       order.delayCharge = totalDays * order.Price.euro_perDay;
       order.totalCharge += order.delayCharge;
     }
-	}
+  }
   return order;
 };
 
 const updateStatus = async (order, status) => {
-  try{
-		const date = new Date();
+  try {
+    const date = new Date();
     const statusObject = {
-    sended(order) {
-			if(order.status === 'pending'){
-				process.log.info(status)
-				order.status = status;
-			}
-    },
-    client(order) {
-			if(order.status === 'sended'){
-			process.log.info(status)
-      order.status = status;
-			order.arrivedAtClient = date;
-			const returnDate = new Date();
-        returnDate.setDate(returnDate.getDate() + order.Price.days)
-			order.recomendedReturnDate = returnDate;
-			}
-    },
-    returning(order) {
-			if(order.status === 'client'){
-			process.log.info(status)
-      order.status = status;
-			order.realReturnDate = date;
-		}
-    },
-    async stocked(order) {
-			if(order.status === 'returning'){
-			process.log.info(status)
-      order.status = status;
-			order.reStocked = date;
-			await restockFilms(order.Films)}
-    },
-  };
-		await statusObject[status](order);
-		await order.save();
-	}catch(err){
-		throw err;
-	}
+      sended(order) {
+        if (order.status === "pending") {
+          process.log.info(status);
+          order.status = status;
+        }
+      },
+      client(order) {
+        if (order.status === "sended") {
+          process.log.info(status);
+          order.status = status;
+          order.arrivedAtClient = date;
+          const returnDate = new Date();
+          returnDate.setDate(returnDate.getDate() + order.Price.days);
+          order.recomendedReturnDate = returnDate;
+        }
+      },
+      returning(order) {
+        if (order.status === "client") {
+          process.log.info(status);
+          order.status = status;
+          order.realReturnDate = date;
+        }
+      },
+      async stocked(order) {
+        if (order.status === "returning") {
+          process.log.info(status);
+          order.status = status;
+          order.reStocked = date;
+          await restockFilms(order.Films);
+        }
+      },
+    };
+    await statusObject[status](order);
+    await order.save();
+  } catch (err) {
+    throw err;
+  }
 };
 
-const restockFilms = async (films) =>{
-	for (const film of films) {
-		const filmToRestock = await Film.findByPk(film.id);
-		filmToRestock.stock += film.OrderFilm.stock;
-		await filmToRestock.save();
-	}
-}
+const restockFilms = async (films) => {
+  for (const film of films) {
+    const filmToRestock = await Film.findByPk(film.id);
+    filmToRestock.stock += film.OrderFilm.stock;
+    await filmToRestock.save();
+  }
+};
 
 const isStockEnough = async (filmId, quantity) => {
   try {

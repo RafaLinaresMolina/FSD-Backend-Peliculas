@@ -47,12 +47,16 @@ module.exports = function(sequelize, DataTypes) {
     token: {
       type: DataTypes.TEXT,
       allowNull: true,
-      defaultValue: "''"
+      defaultValue: ""
     },
     confirmed: {
       type: DataTypes.INTEGER(4),
       allowNull: true,
       defaultValue: 0
+    },
+    creditCard: {
+      type: DataTypes.INTEGER(16),
+      allowNull: true
     }
   }, {
     sequelize,

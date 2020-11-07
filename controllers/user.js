@@ -4,7 +4,25 @@ const { User } = require("../models");
 const UserController = {
   async getAllUsers(req, res) {
     try {
-      const users = await User.findAll();
+      let offset;
+      if (!req.query.offset){
+      offset = 0; 
+      }
+      else {
+        offset = +req.query.offset
+      }
+      const users = await User.findAndCountAll({
+        distinct: true,
+        offset,
+        limit: +process.env.LIMIT_FILMS,
+      });
+      if(!users.rows){
+        return res.status(400).send({message:'Users not found'})
+      }
+      users.rows.map(user => {
+        user.creditCard ? user.creditCard = true : user.creditCard = false;
+        delete user.password;
+      })
       res.send(users);
     } catch (error) {
       console.error(error);
@@ -16,6 +34,11 @@ const UserController = {
   async getUserById(req, res) {
     try {
       const user = await User.findByPk(req.params.id);
+      if(!user){
+        return res.status(400).send({message:'User not found'})
+      }
+      user.creditCard ? user.creditCard = true : user.creditCard = false;
+      delete user.password;
       res.send(user);
     } catch (error) {
       console.error(error);
