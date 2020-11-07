@@ -199,7 +199,10 @@ const OrderController = {
     let OrderFilmInstance;
     try {
       const newOrderFilms = await checkStockage(req.body.Films);
-      const order = { UserId: req.body.UserId };
+      const order = { UserId: req.user.id };
+      if(req.user.creditCard){
+        return res.status(400).send({message: 'must have credit card to create orders.'})
+      }
       process.log.debug(`Aux objects generated`);
       value = await Order.create(order);
       process.log.debug(`Order created`);

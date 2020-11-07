@@ -16,9 +16,13 @@ const UserController = {
         offset,
         limit: +process.env.LIMIT_FILMS,
       });
-      if(!users){
+      if(!users.rows){
         return res.status(400).send({message:'Users not found'})
       }
+      users.rows.map(user => {
+        user.creditCard ? user.creditCard = true : user.creditCard = false;
+        delete user.password;
+      })
       res.send(users);
     } catch (error) {
       console.error(error);
@@ -33,6 +37,8 @@ const UserController = {
       if(!user){
         return res.status(400).send({message:'User not found'})
       }
+      user.creditCard ? user.creditCard = true : user.creditCard = false;
+      delete user.password;
       res.send(user);
     } catch (error) {
       console.error(error);

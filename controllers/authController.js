@@ -70,6 +70,21 @@ const AuthController = {
       });
     }
   },
+  async getUserByToken(req, res) {
+    try {
+      req.user.creditCard ? req.user.creditCard = true : req.user.creditCard = false;
+      delete req.user.password;
+      res.send(req.user);
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .send({
+          message: "Unable to retrive the specified user",
+          trace: error,
+        });
+    }
+  },
   async confirm(req, res) {
     // const token = req.params.token
     try {
