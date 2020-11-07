@@ -1,7 +1,5 @@
 /* jshint indent: 2 */
 
-
-
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Film', {
     id: {
@@ -18,7 +16,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    img_path: {
+    img_portrait: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    img_landscape: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
@@ -51,4 +53,3 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'Film'
     });
 };
-
