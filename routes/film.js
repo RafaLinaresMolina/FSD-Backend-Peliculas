@@ -10,6 +10,7 @@ const auth = require("../middleware/auth");
 router.get('/', controller.getAll);
 router.get('/:id', controller.getById);
 router.get('/film/fulldata/', filmController.getAllFilms);
+router.get('/supersearch/value/:name', filmController.getAllFilmsBySuperSearch)
 router.get('/title/:name', filmController.getFilmByName);
 router.get('/genre/name/:name', filmController.getFilmByGenreName);
 router.get('/genre/:id', filmController.getFilmByGenreId);

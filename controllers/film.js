@@ -8,32 +8,57 @@ const {
 } = require("../models");
 const Op = Sequelize.Op;
 
+// Relation FILM -> GENRE used for filter pruposes
 Film.belongsToMany(Genre, {
-  through: {
-    model: FilmIsGenre,
-  },
+  as: "GenreFilter",
+  through: { model: FilmIsGenre },
+  foreignKey: "id_film",
+});
+
+// Relation GENRE -> FILM used for filter pruposes
+Genre.belongsToMany(Film, {
+  as: "GenreFilter",
+  through: { model: FilmIsGenre },
   foreignKey: "id_genre",
 });
 
+// Relation FILM -> GENRE 
+Film.belongsToMany(Genre, {
+  through: { model: FilmIsGenre },
+  foreignKey: "id_film",
+});
+
+// Relation GENRE -> FILM 
 Genre.belongsToMany(Film, {
-  through: {
-    model: FilmIsGenre,
-  },
-  foreignKey: "id_film",
+  through: { model: FilmIsGenre },
+  foreignKey: "id_genre",
 });
 
+/////////////////////////////////////////////////////////
+// Relation ACTOR -> FILM used for NOT filter pruposes
 Actor.belongsToMany(Film, {
-  through: {
-    model: ActorAppearFilm,
-  },
+  as: 'ActorFilter',
+  through: { model: ActorAppearFilm },
+  foreignKey: "id_actor",
+});
+
+// Relation FILM -> ACTOR used for filter pruposes
+Film.belongsToMany(Actor, {
+  as: 'ActorFilter',
+  through: { model: ActorAppearFilm },
   foreignKey: "id_film",
 });
 
-Film.belongsToMany(Actor, {
-  through: {
-    model: ActorAppearFilm,
-  },
+// Relation ACTOR -> FILM
+Actor.belongsToMany(Film, {
+  through: { model: ActorAppearFilm },
   foreignKey: "id_actor",
+});
+
+// Relation FILM -> ACTOR
+Film.belongsToMany(Actor, {
+  through: { model: ActorAppearFilm },
+  foreignKey: "id_film",
 });
 
 const FilmController = {
@@ -125,6 +150,21 @@ const FilmController = {
     }
   },
 
+  async getAllFilmsBySuperSearch(req, res) {
+    try {
+
+      const superSearchResult = await superSearch(req, res);
+
+      res.send(superSearchResult);
+    } catch (err) {
+      process.log.error(err);
+      res.status(500).send({
+        message: "There was a problem trying to get the super search",
+        trace: err.message,
+      });
+    }
+  },
+
   async getFilmByGenreName(req, res) {
     try {
       let offset;
@@ -141,11 +181,21 @@ const FilmController = {
         include: [
           {
             model: Genre,
+            as: 'GenreFilter',
             where: {
               name: {
                 [Op.like]: `%${req.params.name}%`,
               },
             },
+            required: true,
+            attributes: ['id','name'],
+            through: {
+              attributes: [],
+            },
+          },
+          {
+            model: Genre,
+            as: 'Genres',
             required: true,
             through: {
               attributes: [],
@@ -192,11 +242,6 @@ const FilmController = {
           },
           {
             model: Actor,
-            where: {
-              name: {
-                [Op.like]: `%${req.params.name}%`,
-              },
-            },
             required: true,
             through: {
               attributes: [],
@@ -228,9 +273,14 @@ const FilmController = {
         include: [
           {
             model: Genre,
+            as: 'GenreFilter',
             where: {
               id: +req.params.id,
             },
+            required: true,
+          },
+          {
+            model: Genre,
             required: true,
             through: {
               attributes: [],
@@ -276,13 +326,17 @@ const FilmController = {
           },
           {
             model: Actor,
+            as: 'ActorFilter',
             required: true,
             where: {
               id: +req.params.id,
             },
-            through: {
-              attributes: [],
-            },
+      
+          },
+          {
+            model: Actor,
+            required: true,
+       
           },
         ],
       });
@@ -332,7 +386,178 @@ const FilmController = {
         trace: err,
       });
     }
-  },
+  }
+}
+
+const getFilmsByName = async (req, res) => {
+  try {
+    let offset;
+    if (!req.query.offset){
+    offset = 0; 
+    }
+    else {
+      offset = +req.query.offset
+    }
+    const films = await Film.findAndCountAll({
+      distinct: true,
+      offset,
+      limit: +process.env.LIMIT_FILMS,
+      where: {
+        [Op.or]: {
+          original_title: {
+            [Op.like]: `%${req.params.name}%`,
+          },
+          title: {
+            [Op.like]: `%${req.params.name}%`,
+          },
+        },
+      },
+      include: [{
+          model: Genre,
+          required: true,
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: Actor,
+          required: true,
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+    return films;
+  } catch (err) {
+    process.log.error(err);
+    throw err;
+  }
 };
+
+const getFilmByGenreName = async (req, res) => {
+  try {
+    let offset;
+    if (!req.query.offset){
+    offset = 0; 
+    }
+    else {
+      offset = +req.query.offset
+    }
+    const films = await Film.findAndCountAll({
+      distinct:true,
+      offset:offset,
+      limit: +process.env.LIMIT_FILMS,
+      include: [{
+          model: Genre,
+          as: 'GenreFilter',
+          where: {
+            name: {
+              [Op.like]: `%${req.params.name}%`,
+            },
+          },
+          required: true,
+          attributes: ['id','name'],
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: Genre,
+          as: 'Genres',
+          required: true,
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: Actor,
+          required: true,
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+    return films;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getFilmByActorName = async (req, res) => {
+  try {
+    let offset;
+    if (!req.query.offset){
+    offset = 0; 
+    }
+    else {
+      offset = +req.query.offset
+    }
+    const films = await Film.findAndCountAll({ 
+      offset:offset,
+      limit: +process.env.LIMIT_FILMS,
+      distinct:true,
+      include: [
+        {
+          model: Actor,
+          as: 'ActorFilter',
+          where: {
+            [Op.or]: {
+              name: {
+                [Op.like]: `%${req.params.name}%`,
+              },
+              last_name: {
+                [Op.like]: `%${req.params.name}%`,
+              },
+            },
+          },
+          required: true,
+          attributes: ['id','name', 'last_name'],
+          through: {
+            attributes: [],
+          },
+        },{
+          model: Genre,
+          required: true,
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: Actor,
+          required: true,
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+    return films;
+  } catch (err) {
+    process.log.error(err);
+    throw err;
+  }
+};
+
+const superSearch = async (req, res) => {
+  try {
+    let offset;
+    if (!req.query.offset){
+    offset = 0; 
+    }
+    else {
+      offset = +req.query.offset
+    }
+
+    const filmsByTitleName = await getFilmsByName(req, res);
+    const filmsByActorName = await getFilmByGenreName(req, res);
+    const filmsByGenreTitle = await getFilmByActorName(req, res);
+    
+    return [{byTitle: filmsByTitleName}, {byActor: filmsByActorName}, {byGenre: filmsByGenreTitle}];
+  } catch (err) {
+    process.log.error(err);
+    throw err;
+}};
 
 module.exports = FilmController;
