@@ -1,8 +1,9 @@
+
 const { User, Order, OrderFilm, Film, Price } = require("../models");
 
 Order.belongsTo(User, {
   through: { model: Film },
-  foreignKey: "UserId",
+  foreignkey: 'UserId'
 });
 
 Order.belongsToMany(Film, {
@@ -31,7 +32,14 @@ const OrderController = {
           {
             model: Film,
             required: true,
-            through: { atributes: ["stock"] },
+            //atributes: ["stock"],
+            through: { atributes: [] },
+          },
+          {
+            model: User,
+            required: true,
+            attributes: ['id', 'name', 'last_name', 'email', 'status'],
+       
           },
           {
             model: Price,
@@ -39,11 +47,11 @@ const OrderController = {
           },
         ],
       });
-      if (!orders) {
+      if (!orders.rows) {
         return res.status(400).send({ message: "Orders not found" });
       }
-      const calculatedOrders = calculatePrices(orders);
-      res.send(calculatedOrders);
+      orders.rows = calculatePrices(orders.rows);
+      res.send(orders);
     } catch (err) {
       process.log.error(err.message);
       res.status(500).send({
@@ -76,16 +84,20 @@ const OrderController = {
             },
           },
           {
+            model: User,
+            required: true,
+          },
+          {
             model: Price,
             required: true,
           },
         ],
       });
-      if (!orders) {
+      if (!orders.rows) {
         return res.status(400).send({ message: "Orders not found" });
       }
-      const calculatedOrders = calculatePrices(orders);
-      res.send(calculatedOrders);
+      orders.rows = calculatePrices(orders.rows);
+      res.send(orders);
     } catch (err) {
       process.log.error(err.message);
       res.status(500).send({
@@ -104,6 +116,10 @@ const OrderController = {
             through: {
               attributes: ["stock"],
             },
+          },
+          {
+            model: User,
+            required: true,
           },
           {
             model: Price,
@@ -132,7 +148,7 @@ const OrderController = {
       } else {
         offset = +req.query.offset;
       }
-      const order = await Order.findAndCountAll({
+      const orders = await Order.findAndCountAll({
         distinct: true,
         offset,
         limit: +process.env.LIMIT_FILMS,
@@ -146,16 +162,20 @@ const OrderController = {
             },
           },
           {
+            model: User,
+            required: true,
+          },
+          {
             model: Price,
             required: true,
           },
         ],
       });
-      if (!order) {
-        return res.status(200).send([]);
+      if (!orders.rows) {
+        return res.status(400).send({ message: "Orders not found" });
       }
-      const calculatedOrders = calculatePrice(order.toJSON());
-      res.send(calculatedOrders);
+      orders.rows = calculatePrices(orders.rows);
+      res.send(orders);
     } catch (err) {
       process.log.error(err.message);
       res.status(500).send({
@@ -166,21 +186,7 @@ const OrderController = {
   },
   async update(req, res) {
     try {
-      const order = await Order.findByPk(req.params.id, {
-        include: [
-          {
-            model: Film,
-            required: true,
-            through: {
-              attributes: ["stock"],
-            },
-          },
-          {
-            model: Price,
-            required: true,
-          },
-        ],
-      });
+      const order = await Order.findByPk(req.params.id);
       if (!order) {
         return res.status(400).send({ message: "Order not found" });
       }

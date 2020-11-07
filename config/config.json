@@ -1,19 +1,19 @@
 {
   "new-development": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "",
+    "username": "O3a7XzQjPv",
+    "password": "6o1OC71qAG",
+    "database": "O3a7XzQjPv",
+    "host": "remotemysql.com",
     "dialect": "mysql",
     "define": {
       "timestamps": false
     }
   },
   "development": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "",
+    "username": "thinkpad",
+    "password": "Reliquias1",
+    "database": "films",
+    "host": "127.0.0.1",
     "dialect": "mysql",
     "define": {
       "timestamps": false

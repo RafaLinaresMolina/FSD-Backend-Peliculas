@@ -551,8 +551,8 @@ const superSearch = async (req, res) => {
     }
 
     const filmsByTitleName = await getFilmsByName(req, res);
-    const filmsByActorName = await getFilmByGenreName(req, res);
-    const filmsByGenreTitle = await getFilmByActorName(req, res);
+    const filmsByGenreTitle = await getFilmByGenreName(req, res);
+    const filmsByActorName = await getFilmByActorName(req, res);
     
     return [{byTitle: filmsByTitleName}, {byActor: filmsByActorName}, {byGenre: filmsByGenreTitle}];
   } catch (err) {
