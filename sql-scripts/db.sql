@@ -1,8 +1,8 @@
--- MySQL dump 10.17  Distrib 10.3.22-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.17  Distrib 10.3.25-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: films
 -- ------------------------------------------------------
--- Server version	10.3.22-MariaDB-1ubuntu1
+-- Server version	10.3.25-MariaDB-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,6 +27,7 @@ CREATE TABLE `Actor` (
   `name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
   `status` tinyint(1) DEFAULT 1,
+  `img_portrait` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -59,7 +60,8 @@ CREATE TABLE `Film` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `original_title` varchar(255) NOT NULL,
-  `img_path` varchar(255) NOT NULL,
+  `img_portrait` varchar(255) NOT NULL,
+  `img_landscape` varchar(255) NOT NULL,
   `release_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `synopsis` text NOT NULL,
   `status` tinyint(1) DEFAULT 1,
@@ -181,6 +183,7 @@ CREATE TABLE `User` (
   `last_login` timestamp NOT NULL DEFAULT current_timestamp(),
   `token` text DEFAULT '',
   `confirmed` tinyint(4) DEFAULT 0,
+  `creditCard` int(16) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
@@ -195,4 +198,4 @@ CREATE TABLE `User` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-12 20:30:39
+-- Dump completed on 2020-11-07 13:49:35
