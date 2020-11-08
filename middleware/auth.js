@@ -18,6 +18,7 @@ const auth = {
         return res.status(401).send({ message: error401 });
       }
       req.user = user;
+      req.user.token = token;
       next();
     } catch (error) {
       process.log.error(error.message);

@@ -85,6 +85,25 @@ const AuthController = {
         });
     }
   },
+  async logout(req, res) {
+    try {
+      const user = User.findOne({token: req.user.token});
+      if(!user){
+        return res.status(400).send({message: "User not found"})
+      }
+      user.token = '';
+      await user.save();
+      res.send({message: "User logged out succesfuly"});
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .send({
+          message: "Unable to retrive the specified user",
+          trace: error,
+        });
+    }
+  },
   async confirm(req, res) {
     // const token = req.params.token
     try {
