@@ -10,6 +10,7 @@ const priceRouter = require("./routes/price");
 const OrderRouter = require("./routes/order");
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
+const cors = require("./middleware/cors");
 const app = express();
 const PORT = process.env.PORT || 5500;
 
@@ -21,6 +22,7 @@ Log.readConfig("./config/logger.json").then(() => {
 }) 
 
 const init = () => {
+  app.use(cors)
   app.use(express.json());
   app.use("/users", usersRouter);
   app.use("/auth", authRouter);
